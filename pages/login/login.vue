@@ -99,7 +99,8 @@
 			}
 		},
 		mixins: [mixin],
-		mounted() {			
+		mounted() {	
+			const that = this;
 			// 获取定位
 			this.getPoint();
 			
@@ -354,9 +355,16 @@
 							key: 'USERINFO_ID',
 							data: res.returnMsg.USERINFO_ID
 						});
-						uni.reLaunch({
-							url: '../index/index'
-						})
+						
+						try{
+							window.location.href = uni.getStorageSync('location')
+						}catch(e){
+							//TODO handle the exception
+							uni.reLaunch({
+								url: '../index/index'
+							})
+						}
+						
 					} else if (res.returnMsg.status == '01') {
 						this.code = '';
 						return uni.showToast({
