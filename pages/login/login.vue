@@ -357,7 +357,16 @@
 						});
 						
 						try{
-							window.location.href = uni.getStorageSync('location')
+							let location = uni.getStorageSync('location');
+							console.log(location)
+							
+							if(location) {
+								window.location.href = location;
+							}else {
+								uni.reLaunch({
+									url: '../index/index'
+								})
+							}
 						}catch(e){
 							//TODO handle the exception
 							uni.reLaunch({

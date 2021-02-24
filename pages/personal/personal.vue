@@ -81,7 +81,9 @@ import tabbar from '@/components/common-tabbar/common-tabbar';
 // 引入高德地图
 import amapPlugin from '@/components/initMap.js';
 
-import { personal, shopBank, getShopPay, imgBaseUrl } from '@/common/apis.js';
+import { personal, shopBank, getShopPay, autograph, imgBaseUrl } from '@/common/apis.js';
+var jweixin = require('jweixin-module');
+
 export default {
 	data() {
 		return {
@@ -191,15 +193,7 @@ export default {
 			uni.navigateTo({
 				url: "../withdrawal/withdrawal?bindList=" + JSON.stringify(this.bindList)
 			})
-			// if(this.bindList.Ali || this.bindList.Wx  ) {
-			// 	uni.navigateTo({
-			// 		url: "../withdrawal/withdrawal?bindList=" + JSON.stringify(this.bindList)
-			// 	})
-			// }else{
-			// 	uni.navigateTo({
-			// 		url: "../myCard/myCard"
-			// 	})
-			// }
+			
 		},
 	
 		goPage(index) {
@@ -301,32 +295,63 @@ export default {
 			});
 			// #endif
 			// #ifdef H5
-			this.jweixin.read(() => {
-				this.jweixin.scanQRCode({
-					needResult: 0, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
-					scanType: ['qrCode', 'barCode'], // 可以指定扫二维码还是一维码，默认二者都有
+			autograph({"url": location.href.split('#')[0]}).then(res=>{
+				// 引入微信JS-SDK
+				this.scanCodeH5(res)			
+			})
+			
+			// #endif
+		},
+		scanCodeH5(res) {
+			jweixin.config({
+				debug: false, // 
+				appId: res.appid, // 必填，公众号的唯一标识
+				timestamp: res.timestamp, // 必填，生成签名的时间戳
+				nonceStr: res.nonceStr, // 必填，生成签名的随机串
+				signature: res.signature, // 必填，签名
+				jsApiList: ['scanQRCode'] // 必填，需要使用的JS接口列表
+			})
+			
+			jweixin.ready(() => {
+				jweixin.checkJsApi({
+					jsApiList: ['scanQRCode'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
 					success: function(res) {
-						var shopId = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
-						getShopPay({
-							SHOP_ID: res.result
-						}).then(res => {
-							if (res.returnMsg.status == '00') {
-								uni.navigateTo({
-									url: '../scanPay/scanPay?shopName=' + res.returnMsg.shop.SHOP_NAME + '&shopId=' + shopId
-								});
-							} else {
-								uni.showToast({
+						
+					},
+					fail:function(err) {
+						
+					}
+				});
+				jweixin.scanQRCode({
+					needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+					scanType: ['qrCode', 'barCode'],
+					success: function(res) {
+						let { shopId, money } = JSON.parse(res.resultStr);
+						uni.showToast({
+							title: JSON.parse(res.resultStr)
+						})
+						getShopPay({ SHOP_ID: shopId, money }).then(res => {
+								if (res.returnMsg.status != '00') {
+								return uni.showToast({
 									title: '条码错误!',
 									icon: 'none',
 									duration: 2000,
 									mask: true
 								});
 							}
+							uni.navigateTo({
+								url: `../scanPay/scanPay?shopName=${res.returnMsg.shop.SHOP_NAME}&shopId=${shopId}&money=${money}`
+							});
 						});
+					},
+					fail() {
+						uni.showToast({
+							title: '扫码失败',
+							icon: 'none'
+						})
 					}
 				});
 			});
-			// #endif
 		},
 		// 等级
 		goGrade() {
