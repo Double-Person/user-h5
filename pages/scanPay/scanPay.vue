@@ -185,6 +185,8 @@
 <script>
 	// header
 	import commonHeader from "@/components/common-header/common-header";
+	import mixin from '@/mixin/mixin.js'
+	var jweixin = require('jweixin-module');
 	import {
 		myCard,
 		personal,
@@ -192,7 +194,10 @@
 		wxpay,
 		shopBygoodList,
 		offlinetradingService,
-		offlinetradingServicePay
+		offlinetradingServicePay,
+
+		orderPay,
+		miniPay
 	} from "@/common/apis.js";
 	export default {
 		props: {
@@ -207,6 +212,7 @@
 				default: true
 			}
 		},
+		mixins: [mixin],
 		data() {
 			return {
 				ACTUALPRICE: -1, // 实际支付
@@ -251,19 +257,7 @@
 						iconClass: 'icon-weixin',
 						iconColor: '#09BB07',
 						title: '微信支付'
-					},
-					{
-						id: 2,
-						iconClass: 'icon-zhifubao',
-						iconColor: '#06B4FD',
-						title: '支付宝支付'
-					},
-					{
-						id: 3,
-						iconClass: 'icon-bangdingshezhiyinxingqiabangding',
-						iconColor: '#F7601C',
-						title: '银行卡支付'
-					},
+					}
 				]
 			};
 		},
@@ -273,7 +267,7 @@
 		methods: {
 			// 返回支付选择
 			backPay() {
-				if(this.ACTUALPRICE == 0) {
+				if (this.ACTUALPRICE == 0) {
 					return false;
 				}
 				// 显示支付方式选择
@@ -326,14 +320,14 @@
 				} catch (e) {
 					this.money = 0
 				}
-				if(!this.money) {
+				if (!this.money) {
 					return uni.showToast({
 						title: '请输入正确的付款金额',
 						icon: 'none'
 					})
 				}
 				this.val = '';
-			
+
 				/* * 
 				 * MONEY   总价
 				 * USERINFO_ID  用户ID
@@ -351,7 +345,7 @@
 					if (res.msgType == 0) {
 						let moneyTemp = Number(res.returnMsg.ACTUALPRICE)
 						this.ACTUALPRICE = moneyTemp < 0 ? 0 : moneyTemp
-						if(this.ACTUALPRICE == 0) {
+						if (this.ACTUALPRICE == 0) {
 							this.payPwdMaskHide = false;
 							this.OFFLINETRADING_ID = res.returnMsg.OFFLINETRADING_ID
 						}
@@ -387,33 +381,136 @@
 					tradePass: this.val
 				}).then(res => {
 					uni.hideLoading();
-		
-					if(this.payMode == 1) {
-						this.weChatPay(res.returnMsg)
+
+					if (this.payMode == 1) { // 微信支付
+						this.weChatPayment(res.returnMsg)
 						return false;
 					}
-					if(this.payMode == 2) {
-						this.aliPayFn(res.returnMsg)
-						return false;
-					}
-					
-					
+
+
 					if (res.returnMsg.status == '01') {
 						setTimeout(() => {
-							uni.showToast({title: '交易密码不正确', icon: 'none' })
+							uni.showToast({
+								title: '交易密码不正确',
+								icon: 'none'
+							})
 						}, 1000)
 					} else if (res.returnMsg.status == '02') {
 						setTimeout(() => {
-							uni.showToast({title: '余额不足', icon: 'none' })
+							uni.showToast({
+								title: '余额不足',
+								icon: 'none'
+							})
 						}, 1000)
-						
-					}else {
+
+					} else {
 						let order = res.returnMsg;
 						this.paySuccess(order);
-						
+
 					}
 				})
 
+			},
+
+			weChatPayment(obj) {
+				if (location.href.indexOf("?#") < 0) {
+					location.href = location.href.replace("#", "?#");
+					this.weChatPayment(obj)
+				}
+				let _self = this;
+				miniPay(obj).then(res => {
+					let {
+						appId,
+						nonceStr,
+						paySign,
+						signType,
+						timeStamp
+					} = res.returnMsg.prepay;
+					let packageName = res.returnMsg.prepay.package;
+
+					jweixin.config({
+						debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+						appId: appId, // 必填，公众号的唯一标识
+						timestamp: timeStamp.toString(), // 必填，生成签名的时间戳
+						nonceStr: nonceStr, // 必填，生成签名的随机串
+						signature: paySign, // 必填，签名
+						jsApiList: ['chooseWXPay'] // 必填，需要使用的JS接口列表
+					})
+
+					WeixinJSBridge.invoke(
+						'getBrandWCPayRequest', {
+							"appId": appId, //公众号名称，由商户传入     
+							"timeStamp": timeStamp, //时间戳，自1970年以来的秒数     
+							"nonceStr": nonceStr, //随机串     
+							"package": packageName,
+							"signType": signType, //微信签名方式：     
+							"paySign": paySign //微信签名 
+						},
+						(res) => {
+							if (res.err_msg == "get_brand_wcpay_request:ok") {
+								this.payMaskHide = true; // 隐藏当前支付方式选择
+								uni.showToast({
+									title: '支付成功!',
+									duration: 2000,
+									mask: true
+								});
+								let timer = setTimeout(() => {
+									let order = res.returnMsg;
+									if (order && Object.keys(order).length) {
+										_self.paySuccess(order)
+									} else {
+										clearTimeout(timer)
+									}
+								}, 1000);
+
+							} else {
+								uni.showToast({
+									title: '支付失败!',
+									icon: 'none'
+								});
+							}
+						}, (err) => {
+							// alert(JSON.stringify(err))
+						});
+
+					return false;
+
+
+					jweixin.ready((result) => {
+						jweixin.checkJsApi({
+							jsApiList: ['chooseWXPay'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
+							success: function(res) {
+
+							},
+							fail: function(res) {
+
+							}
+						});
+						jweixin.chooseWXPay({
+							debug: true,
+							appId: appId,
+							timestamp: timeStamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
+							nonceStr: nonceStr, // 支付签名随机串，不长于 32 位
+							package: packageName, // 统一支付接口返回的prepay_id参数值
+							signType: signType, // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
+							paySign: paySign, // 支付签名
+							success: function(res) {
+								// 支付成功后的回调函数
+								console.log(res)
+								_self.payMaskHide = true;
+							},
+							fail: function(err) {
+								console.log(err)
+								alert('支付失败', JSON.stringify(err))
+							},
+							complete() {
+								_self.payMode = 0
+							}
+						});
+					})
+
+				})
+				return false;
 			},
 			// 支付成功
 			paySuccess(order) {
@@ -434,85 +531,21 @@
 						duration: 2000,
 						mask: true
 					});
-				}else {
+				} else {
 					// 
-					if(this.payMode == 0) {
+					if (this.payMode == 0) {
 						this.payMaskHide = true
 						this.payPwdMaskHide = false
-					}else {
-						this.finallyPay() 
+					} else {
+						this.finallyPay()
 					}
-					
+
 				}
 				// 显示密码输入
 				// this.payPwdMaskHide = false
 			},
-			// 微信支付
-			weChatPay(orderInfo) {
-				const self = this;
-				uni.requestPayment({
-					provider: "wxpay",
-					orderInfo: orderInfo,
-					success: res => {
-						// 隐藏当前支付方式选择
-						this.payMaskHide = true;
-						uni.showToast({
-							title: "支付成功!",
-							duration: 2000,
-							mask: true
-						});
-						
-						setTimeout(() => {
-							let order = res.returnMsg;
-							self.paySuccess(order);
-						}, 2000);
-					},
-					fail: err => {
-						uni.showToast({
-							title: "支付失败!",
-							icon: "none",
-							duration: 2000,
-							mask: true
-						});
-					},
-					complete() {
-						this.payMode = 0
-					}
-				});
-			},
-			// 支付宝支付
-			aliPayFn(orderInfo) {
-				const self = this;
-				uni.requestPayment({
-					provider: "alipay",
-					orderInfo: orderInfo,
-					success: res => {
-						// 隐藏当前支付方式选择
-						this.payMaskHide = true;
-						uni.showToast({
-							title: "支付成功!",
-							duration: 2000,
-							mask: true
-						});
-						setTimeout(() => {
-							let order = res.returnMsg;
-							self.paySuccess(order);
-						}, 2000);
-					},
-					fail: err => {
-						uni.showToast({
-							title: "支付失败!",
-							icon: "none",
-							duration: 2000,
-							mask: true
-						});
-				
-					},
-					complete: end => {
-						this.payMode = 0
-					}
-				});
-			},
+		
+
 			// 余额支付
 			balancePay(tradePass) {
 				shopBygoodList({
@@ -570,7 +603,7 @@
 						title: "支付中...",
 						mask: true
 					});
-	
+
 					this.payPwdMaskHide = true;
 					// this.balancePay(this.val)
 					this.finallyPay()
@@ -579,15 +612,27 @@
 			},
 
 			async getInfo(USERINFO_ID) {
-				await uni.showLoading({ title: '加载中', mask: true })
+				await uni.showLoading({
+					title: '加载中',
+					mask: true
+				})
 				await myCard({
 					USERINFO_ID: this.USERINFO_ID
 				}).then(res => {
-					res.returnMsg.userCoupons.map(item => { item.title = "通用抵扣券" + item.MONEY + "元"; });
+					res.returnMsg.userCoupons.map(item => {
+						item.title = "通用抵扣券" + item.MONEY + "元";
+					});
 					this.redpackgeList = res.returnMsg.userCoupons;
 				})
 				// 获取星币
-				await personal({ USERINFO_ID: this.USERINFO_ID }).then(({ returnMsg: { BALANCE, userInfo } }) => {
+				await personal({
+					USERINFO_ID: this.USERINFO_ID
+				}).then(({
+					returnMsg: {
+						BALANCE,
+						userInfo
+					}
+				}) => {
 					this.BALANCE = BALANCE
 					this.XBMoney = userInfo.STARCOINS;
 				})
@@ -636,12 +681,12 @@
 				} else {
 					xb = 0
 				}
-	
+
 
 
 				let yh = 0; // 优惠
 				(this.YHMoney * 1 >= this.copeWith * 1) ? (yh = this.copeWith * 1) : (yh = this.YHMoney * 1)
-	
+
 
 
 				let payMoney = this.copeWith - xb - yh

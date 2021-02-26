@@ -91,7 +91,7 @@
 	.pay-warp {
 		margin-top: 100rpx;
 		width: 100%;
-		height: 500rpx;
+		height: 400rpx;
 		background: $minColor;
 		text-align: center;
 
@@ -117,7 +117,7 @@
 
 		.money {
 			color: $minColor;
-			font-size: 40rpx;
+			font-size: 70rpx;
 			font-weight: 600;
 			text-align: center;
 			border-bottom: dashed 4rpx $bgc;
