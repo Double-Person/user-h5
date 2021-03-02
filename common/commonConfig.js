@@ -8,14 +8,18 @@ export const CONVERSION_KEY = '60ca6302ddbfc1545c05fed7e8fff834';
 export const INDEX_KEY = 'f0d8604522a34fea7af419d353f98e8f';
 
 
-
+let urls = 'https://yflh.hkzhtech.com/qflhadmin/#';
 export const COMMON_URL = 'https://yflh.hkzhtech.com/qufl';
-// export const COMMON_URL = 'http://192.168.0.112:8081';
+// export const COMMON_URL = 'http://192.168.0.110:8081';
 
 // 微信公众号appid
 export const APPID = 'wxcd3e4c058be3dd03';
 
-export const REDIRECT_URI = 'https://yflh.hkzhtech.com/qflhadmin/#/pages/login/login';
+
+
+export const REDIRECT_URI = urls + '/pages/login/login';
+
+export const REDIRECT_URI_COMMON = urls;
 
 // 分享文件配置
 export const SHARE_CONFIG = {

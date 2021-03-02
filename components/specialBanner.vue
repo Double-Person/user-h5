@@ -91,7 +91,7 @@
 			},
 			getBannerDetail(item) {
 				if (item.types == 0 ) { // 外部
-					plus.runtime.openURL(item.path);
+					window.open(item.path)
 				}
 				if (item.types == 1) { // 商家 
 					uni.navigateTo({

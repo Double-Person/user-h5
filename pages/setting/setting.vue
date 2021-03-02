@@ -160,8 +160,13 @@
 		onLoad() {
 			// this.isPwd = getApp().globalData.isPwd;
 			this.judgeTradingPwd()
-			let info = uni.getStorageSync('name');
-			this.phone = JSON.parse(info).PHONE;
+			try {
+				let info = uni.getStorageSync('name');
+				this.phone = JSON.parse(info).PHONE;
+			} catch (e) {
+				//TODO handle the exception
+			}
+
 		},
 
 		methods: {
@@ -274,8 +279,9 @@
 			getPwd(val) {
 				uni.getStorage({
 					key: 'name',
-					success:res => {
+					success: res => {
 						let PASSWORD = JSON.parse(res.data).PASSWORD;
+
 						if (val == PASSWORD) {
 							this.hideBox = true;
 							if (this.type === 2 || this.type === 0) {
@@ -287,16 +293,23 @@
 							}
 						} else {
 							this.hideTips = true;
-							
+
 						}
+					},
+					fail(val) {
+						uni.clearStorageSync();
+						uni.reLaunch({
+							url: "../login/login"
+						})
 					}
 				})
-				
-				
-				
+
+
+
 			},
 			// 获取输入交易密码、
 			getPwd1(val) {
+
 				var pwd = md5(val)
 				if (val == getApp().globalData.pwd) {
 					this.hideBox1 = true;

@@ -1,5 +1,5 @@
 import {autograph, wxwebLogin} from '@/common/apis.js';
-import { APPID, REDIRECT_URI } from '@/common/commonConfig.js'
+import { APPID, REDIRECT_URI, REDIRECT_URI_COMMON } from '@/common/commonConfig.js'
 // #ifdef H5
 var jweixin = require('jweixin-module');	
 // #endif
@@ -44,7 +44,7 @@ const mixin = {
 					if(type == 'card') {
 						window.location.href = uni.getStorageSync('location')
 					}else{
-						window.location.href = 'https://yflh.hkzhtech.com/qflhadmin/#/pages/index/index'
+						window.location.href = REDIRECT_URI_COMMON + '/pages/index/index'
 					}
 				}else { // 不存在是为用户openid
 					uni.setStorageSync('openIdBind', data)

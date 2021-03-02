@@ -230,13 +230,17 @@
 						uni.getStorage({
 							key: 'saveStata',
 							success: (res) => {
+								console.log('===', res.data)
 								if (res.data) {
-									window.location.href = 'https://yflh.hkzhtech.com/qflhadmin/#/pages/index/index'
+									// window.location.href = 'https://yflh.hkzhtech.com/qflhadmin/#/pages/index/index'
+									uni.navigateTo({
+										url: '../index/index'
+									})
 								} else {
 									that.rememberPwdHide = false; // 提示保存密码
 								}
 							},
-							fail: () => {
+							fail: (res) => {
 								that.rememberPwdHide = false; // 提示保存密码
 							}
 						})
@@ -303,10 +307,7 @@
 			async cancelSave() {
 				// 保存状态到本地
 				let that = this;
-				await uni.setStorage({
-					key: 'saveStata',
-					data: false
-				});
+				await uni.setStorage({ key: 'saveStata', data: false });
 				await uni.removeStorage({
 					key: 'name',
 					success: () => {
@@ -347,7 +348,7 @@
 					WX: uni.getStorageSync('openIdBind'),
 					...this.point
 				}).then(res => {
-					console.log(res)
+				
 					if (res.returnMsg.status == '00') {
 						this.PHONE = '';
 						this.code = '';
@@ -358,7 +359,6 @@
 						
 						try{
 							let location = uni.getStorageSync('location');
-							console.log(location)
 							
 							if(location) {
 								window.location.href = location;

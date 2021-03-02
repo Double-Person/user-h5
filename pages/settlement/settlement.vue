@@ -32,7 +32,7 @@
 				<view class="right">
 					<text>共计{{ shopNum }}商品</text>
 					<text>合计 ￥</text>
-					<text>{{ total }}</text>
+					<text>{{ total && (total*1).toFixed(2) || 0 }}</text>
 				</view>
 			</view>
 			<view class="setting-content-remarks">
@@ -76,7 +76,7 @@
 				<text class="total">合计:</text>
 				<view class="price">
 					￥
-					<text>{{ submitTotal }}</text>
+					<text>{{ submitTotal && (submitTotal*1).toFixed(2) || 0 }}</text>
 				</view>
 				<view class="tijiao" @tap="submitOrder">提交订单</view>
 			</view>
@@ -336,7 +336,9 @@ export default {
 				this._myCard(res.data)
 				// 获取星币
 				this._personal(res.data)
-		
+				if (location.href.indexOf("?#") < 0) {
+					 location.href = location.href.replace("#", "?#");
+				}	
 				
 			}
 		});
@@ -500,6 +502,7 @@ export default {
 	
 			// 微信支付
 			if (this.payMode === 1) {
+				
 				this.weChatPayment(obj)
 			}
 			
@@ -557,17 +560,21 @@ export default {
 		},
 		
 		weChatPayment(obj) {
-			if (location.href.indexOf("?#") < 0) {
-				 location.href = location.href.replace("#", "?#");
-				 this.weChatPayment(obj)
-			}		
+			
+			// if (location.href.indexOf("?#") < 0) {
+			// 	 location.href = location.href.replace("#", "?#");
+			// 	 this.weChatPayment(obj)
+			// }	
+				uni.showLoading({
+					title: '加载中'
+				})
 			let _self = this;
 			miniPay(obj).then(res => {
 				let { appId,nonceStr, paySign,signType, timeStamp } = res.returnMsg.prepay;
 				let packageName = res.returnMsg.prepay.package;
 				
 				jweixin.config({
-					debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+					debug: false, 
 					appId: appId, // 必填，公众号的唯一标识
 					timestamp: timeStamp.toString(), // 必填，生成签名的时间戳
 					nonceStr: nonceStr, // 必填，生成签名的随机串
@@ -575,41 +582,41 @@ export default {
 					jsApiList: ['chooseWXPay'] // 必填，需要使用的JS接口列表
 				})
 			
-				   WeixinJSBridge.invoke(
-				      'getBrandWCPayRequest', {
-				         "appId":appId,     //公众号名称，由商户传入     
-				         "timeStamp":timeStamp,         //时间戳，自1970年以来的秒数     
-				         "nonceStr":nonceStr, //随机串     
-				         "package":packageName,     
-				         "signType":signType,         //微信签名方式：     
-				         "paySign":paySign //微信签名 
-				      },
-				      (res) =>{
-				      if(res.err_msg == "get_brand_wcpay_request:ok" ){
-						  this.payMaskHide = true; // 隐藏当前支付方式选择
-						  uni.showToast({
-						  	title: '支付成功!',
-						  	duration: 2000,
-						  	mask: true
-						  });
-						  let timer = setTimeout(() => {
-						  	let order = res.returnMsg;
-							if(order && Object.keys(order).length) {
-								_self.paySuccess(order)
-							}else {
-								clearTimeout(timer)
-							}
-						  }, 1000);
-				      
-				      } else{
-						  uni.showToast({
-						  	title: '支付失败!',
-						  	icon: 'none'
-						  });
-					  }
-				   }, (err) => {
-					   // alert(JSON.stringify(err))
-				   }); 
+			   WeixinJSBridge.invoke(
+				  'getBrandWCPayRequest', {
+					 "appId":appId,     //公众号名称，由商户传入     
+					 "timeStamp":timeStamp,         //时间戳，自1970年以来的秒数     
+					 "nonceStr":nonceStr, //随机串     
+					 "package":packageName,     
+					 "signType":signType,         //微信签名方式：     
+					 "paySign":paySign //微信签名 
+				  },
+				  (res) =>{
+				  if(res.err_msg == "get_brand_wcpay_request:ok" ){
+					  this.payMaskHide = true; // 隐藏当前支付方式选择
+					  uni.showToast({
+						title: '支付成功!',
+						duration: 2000,
+						mask: true
+					  });
+					  let timer = setTimeout(() => {
+						let order = res.returnMsg;
+						if(order && Object.keys(order).length) {
+							_self.paySuccess(order)
+						}else {
+							clearTimeout(timer)
+						}
+					  }, 1000);
+				  
+				  } else{
+					  uni.showToast({
+						title: '支付失败!',
+						icon: 'none'
+					  });
+				  }
+			   }, (err) => {
+				   // alert(JSON.stringify(err))
+			   }); 
 	
 				return false;
 				
@@ -643,6 +650,8 @@ export default {
 					});
 				})
 				
+			}).finally(() => {
+				uni.hideLoading()
 			})
 			return false;
 		},

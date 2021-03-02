@@ -39,9 +39,9 @@
 
 			<!-- 付款方式  应付  实付 -->
 			<view class="payMode">
-				<text>应付：{{copeWith}}元</text>
+				<text>应付：{{copeWith && (copeWith*1).toFixed(2) || 0}}元</text>
 				<view class="right">
-					<text>实付：{{ActualPayment}}元</text>
+					<text>实付：{{ActualPayment && (ActualPayment*1).toFixed(2) || 0}}元</text>
 					<view @tap="submitPay">支付</view>
 				</view>
 			</view>
@@ -197,7 +197,8 @@
 		offlinetradingServicePay,
 
 		orderPay,
-		miniPay
+		miniPay,
+		paymini
 	} from "@/common/apis.js";
 	export default {
 		props: {
@@ -375,13 +376,13 @@
 				// * TYPES 0余额、1微信、2支付宝
 				// * OFFLINETRADING_ID   ID  tradePass
 
-				offlinetradingServicePay({
+				paymini({
 					OFFLINETRADING_ID: this.OFFLINETRADING_ID,
 					TYPES: this.payMode,
 					tradePass: this.val
 				}).then(res => {
 					uni.hideLoading();
-
+					console.log(res)
 					if (this.payMode == 1) { // 微信支付
 						this.weChatPayment(res.returnMsg)
 						return false;
@@ -413,104 +414,64 @@
 			},
 
 			weChatPayment(obj) {
-				if (location.href.indexOf("?#") < 0) {
-					location.href = location.href.replace("#", "?#");
-					this.weChatPayment(obj)
-				}
+
 				let _self = this;
-				miniPay(obj).then(res => {
-					let {
-						appId,
-						nonceStr,
-						paySign,
-						signType,
-						timeStamp
-					} = res.returnMsg.prepay;
-					let packageName = res.returnMsg.prepay.package;
-
-					jweixin.config({
-						debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-						appId: appId, // 必填，公众号的唯一标识
-						timestamp: timeStamp.toString(), // 必填，生成签名的时间戳
-						nonceStr: nonceStr, // 必填，生成签名的随机串
-						signature: paySign, // 必填，签名
-						jsApiList: ['chooseWXPay'] // 必填，需要使用的JS接口列表
-					})
-
-					WeixinJSBridge.invoke(
-						'getBrandWCPayRequest', {
-							"appId": appId, //公众号名称，由商户传入     
-							"timeStamp": timeStamp, //时间戳，自1970年以来的秒数     
-							"nonceStr": nonceStr, //随机串     
-							"package": packageName,
-							"signType": signType, //微信签名方式：     
-							"paySign": paySign //微信签名 
-						},
-						(res) => {
-							if (res.err_msg == "get_brand_wcpay_request:ok") {
-								this.payMaskHide = true; // 隐藏当前支付方式选择
-								uni.showToast({
-									title: '支付成功!',
-									duration: 2000,
-									mask: true
-								});
-								let timer = setTimeout(() => {
-									let order = res.returnMsg;
-									if (order && Object.keys(order).length) {
-										_self.paySuccess(order)
-									} else {
-										clearTimeout(timer)
-									}
-								}, 1000);
-
-							} else {
-								uni.showToast({
-									title: '支付失败!',
-									icon: 'none'
-								});
-							}
-						}, (err) => {
-							// alert(JSON.stringify(err))
-						});
-
-					return false;
-
-
-					jweixin.ready((result) => {
-						jweixin.checkJsApi({
-							jsApiList: ['chooseWXPay'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
-							success: function(res) {
-
-							},
-							fail: function(res) {
-
-							}
-						});
-						jweixin.chooseWXPay({
-							debug: true,
-							appId: appId,
-							timestamp: timeStamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
-							nonceStr: nonceStr, // 支付签名随机串，不长于 32 位
-							package: packageName, // 统一支付接口返回的prepay_id参数值
-							signType: signType, // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
-							paySign: paySign, // 支付签名
-							success: function(res) {
-								// 支付成功后的回调函数
-								console.log(res)
-								_self.payMaskHide = true;
-							},
-							fail: function(err) {
-								console.log(err)
-								alert('支付失败', JSON.stringify(err))
-							},
-							complete() {
-								_self.payMode = 0
-							}
-						});
-					})
-
+				let {
+					appId,
+					nonceStr,
+					paySign,
+					signType,
+					timeStamp
+				} =obj;
+				let packageName = obj.package;
+				
+				jweixin.config({
+					debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+					appId: appId, // 必填，公众号的唯一标识
+					timestamp: timeStamp.toString(), // 必填，生成签名的时间戳
+					nonceStr: nonceStr, // 必填，生成签名的随机串
+					signature: paySign, // 必填，签名
+					jsApiList: ['chooseWXPay'] // 必填，需要使用的JS接口列表
 				})
-				return false;
+				
+				WeixinJSBridge.invoke(
+					'getBrandWCPayRequest', {
+						"appId": appId, //公众号名称，由商户传入     
+						"timeStamp": timeStamp, //时间戳，自1970年以来的秒数     
+						"nonceStr": nonceStr, //随机串     
+						"package": packageName,
+						"signType": signType, //微信签名方式：     
+						"paySign": paySign //微信签名 
+					},
+					(res) => {
+						console.log(res)
+						if (res.err_msg == "get_brand_wcpay_request:ok") {
+							this.payMaskHide = true; // 隐藏当前支付方式选择
+							uni.showToast({
+								title: '支付成功!',
+								duration: 2000,
+								mask: true
+							});
+							let timer = setTimeout(() => {
+								let order = res.returnMsg;
+								if (order && Object.keys(order).length) {
+									_self.paySuccess(order)
+								} else {
+									clearTimeout(timer)
+								}
+							}, 1000);
+				
+						} else {
+							uni.showToast({
+								title: '支付失败!',
+								icon: 'none'
+							});
+						}
+					}, (err) => {
+						// alert(JSON.stringify(err))
+					});
+					return false;
+			
 			},
 			// 支付成功
 			paySuccess(order) {
@@ -525,26 +486,16 @@
 			// 支付
 			pay(index) {
 				this.payMode = index;
-				if (this.payMode === 3) {
-					uni.showToast({
-						title: "暂未开通此功能!",
-						duration: 2000,
-						mask: true
-					});
-				} else {
-					// 
-					if (this.payMode == 0) {
-						this.payMaskHide = true
-						this.payPwdMaskHide = false
-					} else {
-						this.finallyPay()
-					}
-
+				if (this.payMode == 0) {
+					this.payMaskHide = true
+					this.payPwdMaskHide = false
+				} else if (this.payMode == 1) {
+					this.finallyPay()
 				}
 				// 显示密码输入
 				// this.payPwdMaskHide = false
 			},
-		
+
 
 			// 余额支付
 			balancePay(tradePass) {
@@ -658,6 +609,9 @@
 
 					this.USERINFO_ID = res.data;
 					this.getInfo()
+					if (location.href.indexOf("?#") < 0) {
+						location.href = location.href.replace("#", "?#");
+					}
 				},
 
 			});

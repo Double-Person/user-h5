@@ -8,6 +8,7 @@
 </template>
 
 <script>
+	import { REDIRECT_URI_COMMON } from '@/common/commonConfig.js'
 	export default {
 		props:{
 			active:{
@@ -27,9 +28,9 @@
 		},
 		methods: {
 			goPage(index){
-				if (location.href.indexOf("?#") > 0) {
-					 location.href = location.href.replace("?#", "#");
-				}
+				// if (location.href.indexOf("?#") > 0) {
+				// 	 location.href = location.href.replace("?#", "#");
+				// }
 				var id = this.active;
 				id = index;
 				if(id==1){

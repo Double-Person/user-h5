@@ -151,6 +151,11 @@ export const getBanner = params => request.get('/api/ordersummary/banner', { par
 export const getPush = params => request.post('/api/ordersummary/vendor/push', params);
 // 52.微信公众号支付
 export const miniPay = params => request.post('/api/ordersummary/pay/mini', params);
+
+export const paymini = params => request.post('/api/ordersummary/offlinetrading/paymini', params);
+
+
+
 // 53.支付宝提现
 export const transfer = params => request.post('/api/ordersummary/ali/transfer', params);
 // 54.关于我们

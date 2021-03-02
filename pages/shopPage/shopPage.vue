@@ -159,26 +159,23 @@
 					<view class>复制微信号，添加客服为好友</view>
 					<view class>微信号：{{vendor.WX}}</view>
 				</view>
-				<!-- #ifdef APP-PLUS -->
 				<view class="copy" @tap="copy">复制微信号</view>
-				<!-- #endif -->
 				
 
 				<view class="btn">
-					<!-- #ifdef APP-PLUS -->
-					<text @tap="addWeiXin">打开微信</text>
-					<!-- #endif -->
+					<!-- <text @tap="addWeiXin">打开微信</text> -->
+					 
 					<text @tap="weixinMaskHide=true" class="close">取消</text>
 				</view>
 				
 				<!-- #ifdef H5 -->
-				<!-- <view class="h5wx">
+				<view class="h5wx">
 					<text class="iconfont icon-shanchu" @tap="weixinMaskHide=true"></text>
 					<image :src="imgBaseUrl + vendor.WXQRCODE" mode="aspectFit" />
 					<view class="h5tips">
 						<text>长按识别图中二维码</text>
 					</view>
-				</view> -->
+				</view>
 				<!-- #endif -->
 			</view>
 		</view>
@@ -504,10 +501,13 @@
 				// #ifdef H5
 				let content = this.vendor.WX; // 复制内容，必须字符串，数字需要转换为字符串
 				const result = h5Copy(content);
-				if (result === true) {
+		
+				if (result) {
 					uni.showToast({
-						title: "复制成功"
-					});
+						title: '复制成功',
+						icon: 'success'
+					})
+					
 				} else {
 					uni.showToast({
 						title: "复制失败",
@@ -1273,7 +1273,7 @@
 			height: 100%;
 			top: 0;
 			left: 0;
-			z-index: 9999;
+			z-index: 99;
 			background: rgba(1, 1, 1, 0.5);
 
 			.weixinMask-content {
