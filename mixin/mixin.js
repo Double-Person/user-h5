@@ -15,6 +15,13 @@ const mixin = {
 		
 		
 	},
+	onLoad(opt) {
+		console.log('全局mixin====')
+		let code = location.search.substr(1).split('&')[0].split('=')[1];
+		if(code) {
+			this.getOpenId()
+		}
+	},
 	
 	methods: {
 		loginInMixin() {
@@ -37,10 +44,11 @@ const mixin = {
 			wxwebLogin({ code }).then(res => {
 				const {isExist, data} = res.returnMsg;
 				uni.setStorageSync('isExist', isExist);
+				uni.setStorageSync('isWeChatLogin', true);
 				if(isExist) { //、 存在用户信息  // data 为用户信息
 					uni.setStorageSync('userInfo', data)
 					uni.setStorageSync('USERINFO_ID', data.USERINFO_ID)
-					
+					uni.setStorageSync('isWeChatLogin', false);
 					if(type == 'card') {
 						window.location.href = uni.getStorageSync('location')
 					}else{

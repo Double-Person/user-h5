@@ -30,7 +30,7 @@
 							<text class="title">{{goods.GOODS_NAME}}</text>
 							<view class="num">
 								<text>数量: {{ goods.COUNTS }}</text>
-								<text>好评率: {{ goods.BETTER * 100 }}%</text>
+								<text>好评率: {{ (goods.BETTER * 100).toFixed(2) }}%</text>
 							</view>
 							<text class="price">
 								¥{{goods.PRICE}}

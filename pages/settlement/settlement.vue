@@ -354,16 +354,16 @@ export default {
 			return all;
 		}
 	},
-	beforeDestroy() {
-		if (location.href.indexOf("?#") > 0) {
-			 location.href = location.href.replace("?#", "#");
-		}
-	},
-	onUnload(){
-		if (location.href.indexOf("?#") > 0) {
-			 location.href = location.href.replace("?#", "#");
-		}
-	},
+	// beforeDestroy() {
+	// 	if (location.href.indexOf("?#") > 0) {
+	// 		 location.href = location.href.replace("?#", "#");
+	// 	}
+	// },
+	// onUnload(){
+	// 	if (location.href.indexOf("?#") > 0) {
+	// 		 location.href = location.href.replace("?#", "#");
+	// 	}
+	// },
 	
 	methods: {
 		// 获取收货地址

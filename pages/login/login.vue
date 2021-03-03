@@ -20,7 +20,14 @@
 				<text @tap="register">立即注册</text>
 			</view>
 		</view>
+		
+		
+		
 		<button class="login-content-btn" :disabled="btnState" :class="btnState?'btnState':''" @tap="goIndex">登录</button>
+		<view class="otherLogin">
+			快捷登录方式 <text class="iconfont icon-weixin" @tap="weixinLogin"></text>
+		</view>
+		
 		<view class="login-tipsText">
 			根据国家网络实名的相关规定，自2017年10月1日起，
 			您需要绑定手机才能享受正常服务。
@@ -44,9 +51,7 @@
 
 		<!-- 其它登录方式 -->
 	
-		<view class="otherLogin">
-			快捷登录方式 <text class="iconfont icon-weixin" @tap="weixinLogin"></text>
-		</view>
+		
 
 
 		<view class="mask-bind" v-if="isShowMask">
@@ -108,7 +113,9 @@
 				key: 'saveStata',
 				success: function(res) {
 					let saveStata = res.data;
-					if (saveStata) {
+					
+					let isWeChatLogin = uni.getStorageInfoSync('isWeChatLogin') || false;
+					if (saveStata && !isWeChatLogin) {
 						try {
 							uni.getStorage({
 								key: 'name',

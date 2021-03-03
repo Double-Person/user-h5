@@ -216,6 +216,8 @@
 		mixins: [mixin],
 		data() {
 			return {
+				NUMBER: '',
+				TIME: '',
 				ACTUALPRICE: -1, // 实际支付
 				BALANCE: 0, // 余额
 				disabled: false,
@@ -344,11 +346,14 @@
 				}
 				offlinetradingService(query).then(res => {
 					if (res.msgType == 0) {
+						this.OFFLINETRADING_ID = res.returnMsg.OFFLINETRADING_ID
+						this.TIME = res.returnMsg.CREATETIME
+						this.NUMBER = res.returnMsg.NUMBER
+						
 						let moneyTemp = Number(res.returnMsg.ACTUALPRICE)
 						this.ACTUALPRICE = moneyTemp < 0 ? 0 : moneyTemp
 						if (this.ACTUALPRICE == 0) {
 							this.payPwdMaskHide = false;
-							this.OFFLINETRADING_ID = res.returnMsg.OFFLINETRADING_ID
 						}
 						if (this.payMode == 0) {
 							this.payPwdMaskHide = false;
@@ -384,6 +389,7 @@
 					uni.hideLoading();
 					console.log(res)
 					if (this.payMode == 1) { // 微信支付
+					
 						this.weChatPayment(res.returnMsg)
 						return false;
 					}
@@ -452,13 +458,28 @@
 								duration: 2000,
 								mask: true
 							});
-							let timer = setTimeout(() => {
-								let order = res.returnMsg;
-								if (order && Object.keys(order).length) {
-									_self.paySuccess(order)
-								} else {
-									clearTimeout(timer)
+							setTimeout(() => {
+								try{
+									let parmas = {
+										SHOP_NAME: _self.shopName,
+										NUMBER: _self.NUMBER,
+										TIME: _self.TIME,
+										TYPES: 1,
+									}
+									_self.paySuccess(parmas)
+								}catch(e){
+									let order = {
+										total: _self.ActualPayment,
+										SHOP_NAME: _self.shopName,
+										NUMBER: _self.NUMBER,
+										TIME: _self.TIME,
+										TYPES: 1,
+									}
+									uni.navigateTo({
+										url: '../payComplete/payComplete?orderInfo=' + JSON.stringify(order)
+									});
 								}
+								
 							}, 1000);
 				
 						} else {
@@ -476,7 +497,7 @@
 			// 支付成功
 			paySuccess(order) {
 				// order.total = this.ActualPayment; // money
-				order.total = this.money; // money
+				order.total = this.ActualPayment; // money
 				setTimeout(() => {
 					uni.redirectTo({
 						url: '../payComplete/payComplete?orderInfo=' + JSON.stringify(order)
@@ -578,12 +599,18 @@
 				// 获取星币
 				await personal({
 					USERINFO_ID: this.USERINFO_ID
-				}).then(({
-					returnMsg: {
-						BALANCE,
-						userInfo
+				}).then(({ returnMsg: { BALANCE, userInfo } }) => {
+					let openid = userInfo.WX;
+					
+					if(!openid) {  // bucunzai
+						this.loginInMixin()
+					}else {
+						let code = location.search.substr(1).split('&')[0].split('=')[1];
+						if(code) {
+							uni.setStorageSync('location', location.href)
+							this.getOpenId('card')
+						}
 					}
-				}) => {
 					this.BALANCE = BALANCE
 					this.XBMoney = userInfo.STARCOINS;
 				})

@@ -47,10 +47,7 @@
 		},
 		onLoad(opt) {
 			if (opt.orderInfo) {
-				console.log(opt.orderInfo)
 				this.info = JSON.parse(opt.orderInfo);
-				
-				console.log(this.info)
 			}
 				
 		},

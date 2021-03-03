@@ -77,7 +77,7 @@
 								<text class="title" @tap="goDetails(item1.goodsId)">{{item1.shopName}}</text>
 								<view class="text" @tap="goDetails(item1.goodsId)">
 									<text>月售{{item1.monthlySales}}</text>
-									<text>好评率{{item1.score * 100 }}%</text>
+									<text>好评率{{ (item1.score * 100).toFixed(2)}}%</text>
 								</view>
 								<view class="addGoods">
 									<view @tap="goDetails(item1.goodsId)" class="addGoods-left">
@@ -149,9 +149,9 @@
 					添加客服微信
 					<text class="iconfont icon-quxiao" @tap="weixinMaskHide=true"></text>
 				</view>
-				
-				
-				
+
+
+
 				<view class="one">
 					<text>步骤</text>
 				</view>
@@ -160,14 +160,14 @@
 					<view class>微信号：{{vendor.WX}}</view>
 				</view>
 				<view class="copy" @tap="copy">复制微信号</view>
-				
+
 
 				<view class="btn">
 					<!-- <text @tap="addWeiXin">打开微信</text> -->
-					 
+
 					<text @tap="weixinMaskHide=true" class="close">取消</text>
 				</view>
-				
+
 				<!-- #ifdef H5 -->
 				<view class="h5wx">
 					<text class="iconfont icon-shanchu" @tap="weixinMaskHide=true"></text>
@@ -220,7 +220,9 @@
 </template>
 
 <script>
-	import { SHARE_CONFIG } from '@/common/commonConfig.js'
+	import {
+		SHARE_CONFIG
+	} from '@/common/commonConfig.js'
 	// #ifdef H5
 	// 复制
 	import h5Copy from "@/components/junyi-h5-copy/junyi-h5-copy.js";
@@ -237,6 +239,7 @@
 		name: 'ShopPage',
 		data() {
 			return {
+				computedListData: [],
 				imgBaseUrl: imgBaseUrl,
 				scrollHeight: "100%",
 				vendor: {},
@@ -259,11 +262,8 @@
 			};
 		},
 		onLoad(e) {
-			
-			uni.showLoading({
-				title: '加载中',
-				mask: true
-			})
+
+			uni.showLoading({ title: '加载中', mask: true })
 			// 获取店铺id
 			this.shopId = e.shopId;
 			uni.getSystemInfo({
@@ -273,9 +273,7 @@
 				}
 			});
 			// 获取商家信息
-			shopList({
-				SHOP_ID: e.shopId
-			}).then(res => {
+			shopList({ SHOP_ID: e.shopId }).then(res => {
 				this.vendor = res.returnMsg.vendor;
 				this.status = res.returnMsg.isCollection == 'Y'
 				this.LONGITUDE = res.returnMsg.vendor.LONGITUDE;
@@ -286,6 +284,7 @@
 					});
 				});
 				this.mainArray = res.returnMsg.list;
+				this.computedList(res.returnMsg.list)
 			}).finally(() => uni.hideLoading())
 			// 获取userid
 			uni.getStorage({
@@ -301,40 +300,49 @@
 			// #endif
 		},
 		methods: {
+			mergeList() {
+				
+			},
+			// 获取列表
+			computedList(res) {
+				let mainArr = JSON.parse(JSON.stringify(res));
+				var arr = [];
+				mainArr.map((item, index) => {
+					item.list.map((item1, index1) => {
+						arr.push({ title: item.title, list: item.list });
+					});
+				});
+				
+				let list = arr.map(item => item.list);
+				let arrs = [].concat(...list);
+				let obj = {};
+				let newSetData = arrs.reduce((cur,next) => {
+				    obj[next.goodsId] ? "" : obj[next.goodsId] = true && cur.push(next);
+				    return cur;
+				},[])
+				this.computedListData = newSetData
+				return newSetData
+			},
 			// 添加到购物车
 			addToCard() {
-				let list = this.selectArr.map(item => item.list);
-				let arr = [].concat(...list);
-				let arrJson = JSON.parse(JSON.stringify(arr));
-				let filterArr = arrJson.filter(item => item.num)
-				let obj = {};
-				let cardList = filterArr.map(ele => {
+				let list = this.addCartShow.map(ele => {
 					return {
 						GOODS_ID: ele.goodsId,
 						COUNTS: ele.num,
 						USERINFO_ID: uni.getStorageSync('USERINFO_ID')
 					}
-				}).reduce(function(item, next) {
-					obj[next.GOODS_ID] ? '' : obj[next.GOODS_ID] = true && item.push(next);
-					return item;
-				}, []).forEach(send => {
+				}).forEach(send => {
 					this.saveCard(send)
 				})
-
 			},
 			// 发送请求添加到购物车
 			saveCard(data) {
-				addCarts(data).then(({
-					msgType
-				}) => {
+				console.log('添加购物车',data)
+				addCarts(data).then(({ msgType }) => {
 					if (msgType == 0) {
-						uni.showToast({
-							title: '添加购物车成功'
-						})
+						uni.showToast({ title: '添加购物车成功' })
 					} else {
-						uni.showToast({
-							title: '添加购物车失败'
-						})
+						uni.showToast({ title: '添加购物车失败' })
 					}
 				})
 			},
@@ -430,13 +438,11 @@
 			async getTopArr() {
 				/* Promise 对象数组 */
 				let p_arr = [];
-
 				/* 遍历数据，创建相应的 Promise 数组数据 */
 				for (let i = 0; i < this.mainArray.length; i++) {
 					const resu = await this.getScrollTop(`#item-${i}`);
 					p_arr.push(resu);
 				}
-
 				this.rightTopArr = p_arr;
 				/* 主区域滚动容器的顶部距离 */
 				this.getScrollTop("#scroll-el").then(res => {
@@ -444,7 +450,6 @@
 					// #ifdef H5
 					top += 43; //因固定提示块的需求，H5的默认标题栏是44px
 					// #endif
-
 					/* 所有节点信息返回后调用该方法 */
 					Promise.all(p_arr).then(data => {
 						this.tipsTop = `${data}px`;
@@ -454,7 +459,6 @@
 			},
 			// 拨打电话
 			callPhone() {
-				console.log(this.vendor.PHONE)
 				uni.makePhoneCall({
 					phoneNumber: this.vendor.PHONE //仅为示例
 				});
@@ -501,13 +505,13 @@
 				// #ifdef H5
 				let content = this.vendor.WX; // 复制内容，必须字符串，数字需要转换为字符串
 				const result = h5Copy(content);
-		
+
 				if (result) {
 					uni.showToast({
 						title: '复制成功',
 						icon: 'success'
 					})
-					
+
 				} else {
 					uni.showToast({
 						title: "复制失败",
@@ -565,6 +569,13 @@
 						});
 					});
 				}
+				
+				for(let i = 0; i <= this.computedListData.length; i++){
+					if(this.computedListData[i].goodsId == id){
+						this.computedListData[i].num += num;
+						return false
+					}
+				}
 			},
 			// 去结算
 			goSettlement() {
@@ -576,39 +587,13 @@
 						icon: "none"
 					});
 				}
-				this.selectArr.map(item => {
-					item.list.map(item1 => {
-						arr.push(item1);
-					});
-				});
-
-				let list = this.selectArr.map(item => item.list);
-
-				let temp = [].concat(...list);
-				temp = temp.filter(item => item.num != 0)
-				temp.forEach((addShopId, index) => {
-					addShopId.SHOP_ID = this.vendor.SHOP_ID
-				})
-
-				let obj = {};
-				let peon = temp.reduce((cur, next) => {
-					obj[next.goodsId] ? "" : obj[next.goodsId] = true && cur.push(next);
-					return cur;
-				}, [])
-				console.log(peon)
-				let stringifyArr = JSON.stringify(peon)
-
-
+								
+				let stringifyArr = JSON.stringify(this.addCartShow)
 				uni.navigateTo({
 					url: "../settlement/settlement?item=" + stringifyArr + "&allNum=" + this.titleAll + "&shopId=" + this.shopId +
 						'&page=shopPage' + '&phone=' + this.vendor.PHONE
 				})
-				// uni.navigateTo({
-				// 	url: "../settlement/settlement?item=" +
-				// 		encodeURIComponent(JSON.stringify(arr)) +
-				// 		"&shopId=" +
-				// 		this.shopId
-				// });
+				
 
 			},
 			// 清空购物车
@@ -620,6 +605,8 @@
 					});
 				});
 				this.hideCartMask = true;
+				
+				this.computedListData.forEach(ele => ele.num =0);
 			},
 			// 进入消息
 			goNews() {
@@ -650,9 +637,16 @@
 					}
 				});
 			},
+			
 			// 分享功能开始
 			share(index) {
-				const { href, title, summary, imageUrl, link } = SHARE_CONFIG
+				const {
+					href,
+					title,
+					summary,
+					imageUrl,
+					link
+				} = SHARE_CONFIG
 				// #ifdef APP-PLUS
 				// 分享到微信
 				if (index === 1) {
@@ -777,65 +771,26 @@
 				});
 				return arr;
 			},
+			
 			addCartShow() {
-				var arr = [];
-				this.mainArray.map((item, index) => {
-					item.list.map((item1, index1) => {
-						if (item1.num > 0) {
-							arr.push({
-								title: item.title,
-								list: item.list
-							});
-						}
-					});
-				});
-				let list = arr.map(item => item.list);
-				let temp = [].concat(...list);
-				var obj = {};
-				temp = temp.reduce(function(item, next) {
-					obj[next.goodsId] ? '' : obj[next.goodsId] = true && item.push(next);
-					return item;
-				}, []);
-
-				let showList = temp.filter(ele => ele.num)
-				return showList
-
+				let list = this.computedListData.filter(item => item.num);
+				return list;
 			},
 			// 计算总价
 			titleAll() {
-				var all = 0;
-				let list = this.selectArr.map(item => item.list);
-				let arr = [].concat(...list);
-				let obj = {};
-				arr = arr.reduce(function(item, next) {
-					obj[next.goodsId] ? '' : obj[next.goodsId] = true && item.push(next);
-					return item;
-				}, []).forEach(item => {
+				let all = 0;
+				this.computedListData.forEach(item => {
 					all += item.num * item.price;
 				})
 				return all.toFixed(2);
 			},
 			// 计算数量
 			goodNum() {
-				// var num = 0;
-				// // 筛选已选
-				// this.mainArray.map((item, index) => {
-				// 	item.list.map((item1, index1) => {
-				// 		num += item1.num;
-				// 	});
-				// });
-				// return num;
-				var all = 0;
-				let list = this.selectArr.map(item => item.list);
-				let arr = [].concat(...list);
-				let obj = {};
-				arr = arr.reduce((item, next) => {
-					obj[next.goodsId] ? '' : obj[next.goodsId] = true && item.push(next);
-					return item;
-				}, []).forEach(item => {
+				let all = 0;
+				this.computedListData.forEach(item => {
 					all += item.num * 1;
 				})
-				return all
+				return all;
 			}
 		}
 	};
@@ -1306,8 +1261,8 @@
 					}
 				}
 
-		
-				/* app start */ 
+
+				/* app start */
 
 				.one {
 					border-top: 1px solid #f2f2f2;
@@ -1378,17 +1333,19 @@
 					text:first-child {
 						background: #4cd964;
 					}
-					
+
 					/* #ifdef APP-PLUS */
-					.close{
+					.close {
 						width: 50%;
 					}
+
 					/* #endif */
-					
+
 					/* #ifdef H5 */
-					.close{
+					.close {
 						width: 100%;
 					}
+
 					/* #endif */
 				}
 

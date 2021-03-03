@@ -111,6 +111,8 @@
 		backCardInfo,
 		imgBaseUrl
 	} from "@/common/apis.js";
+	
+	import mixin from '@/mixin/mixin.js'
 	export default {
 		components: {
 			commonHeader,
@@ -118,6 +120,7 @@
 			uniPopupMessage,
 			uniPopupDialog
 		},
+		mixins: [mixin],
 		data() {
 			return {
 				disabel: false, // tixian
@@ -298,19 +301,17 @@
 			// 获取微信openId
 			getOpenIdByWchat() {
 				const that = this;
-				uni.login({
-					provider: 'weixin',
-					success: function(loginRes) {
-						uni.getUserInfo({
-							provider: 'weixin',
-							success: function(infoRes) {
-								//ofTYkxBM2Jh0KluonnXzNpLLxYuA'
-								console.log('用户昵称为：', infoRes.userInfo);
-								that.openid = infoRes.userInfo.openId
-							}
-						});
+				
+				if(this.userInfo.WX) {
+					this.openid = this.userInfo.WX
+				}else {
+					let code = location.search.substr(1).split('&')[0].split('=')[1];
+					if(code) {
+						uni.setStorageSync('location', location.href)
+						this.getOpenId('card')
 					}
-				});
+				}
+				
 			}
 
 		}

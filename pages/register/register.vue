@@ -56,6 +56,7 @@
 <script>
 	// header
 	import commonHeader from "@/components/common-header/common-header";
+	import {INDEX_KEY, CONVERSION_KEY} from "@/common/commonConfig.js"
 	// 注册接口
 	import {
 		register,
@@ -64,7 +65,8 @@
 	export default {
 		data() {
 			return {
-				key: 'f0d8604522a34fea7af419d353f98e8f',
+				key: INDEX_KEY, // 'f0d8604522a34fea7af419d353f98e8f',
+				CONVERSION_KEY: CONVERSION_KEY,
 				selectCode: false,
 				codeText: "获取验证码",
 				disabled: false,
@@ -251,24 +253,49 @@
 					url: '../login/login'
 				})
 			},
-			
-			// 获取定位
 			getPoint() {
 				uni.getLocation({
-					type: 'wgs84',
-					geocode: true, //设置该参数为true可直接获取经纬度及城市信息
-					success: ({ longitude, latitude, address: {province, city, district}}) => {
-						this.point = { CITY: city, AREA: district }
+					type: 'gcj02',
+					success: (res) => {
+						this.conversionPoint(res)
 					},
 					fail(err) {
 						uni.showToast({
 							title: '定位失败',
 							icon: 'none'
 						})
-						
-					}
+					},
+					
 				});
-			}
+			},
+			//   金纬度转位置
+			conversionPoint(res) {
+				let that = this;
+				uni.request({
+					url: "https://restapi.amap.com/v3/geocode/regeo?parameters",
+					method: 'GET',
+					data: {
+						key: that.key,
+						location: `${res.longitude}, ${res.latitude}`
+					},
+					success: (data) => {
+						let {
+							province,
+							city,
+							district
+						} = data.data.regeocode.addressComponent
+						this.point = { CITY: city, AREA: district }
+					},
+					fail: err => {
+						uni.showToast({
+							title: "定位失败",
+							icon: 'none'
+						})
+					},
+				})
+			},
+			
+		
 		},
 		
 	}
