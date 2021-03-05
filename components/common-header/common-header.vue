@@ -34,7 +34,7 @@
 					</view>
 					<view class="pengyouquan" @tap="share(2, $event)">
 						<view>
-							<image src="../../static/images/pengyouquan.png" mode=""></image>
+							<image src="/static/images/pengyouquan.png" mode=""></image>
 						</view>
 						<text>朋友圈</text>
 					</view>
@@ -58,6 +58,9 @@
 
 <script>
 	import { SHARE_CONFIG } from '@/common/commonConfig.js'
+	import mixin from '@/mixin/mixin.js'
+	import share from '@/mixin/share.js'
+	share
 	export default {
 		props: {
 			headerTitl: {
@@ -89,12 +92,14 @@
 				default: '/pages/index/index'
 			}
 		},
+		mixins: [mixin, share],
 		data() {
 			return {
 				maskState: false
 			}
 		},
 		onShareAppMessage(res) {
+			console.log(res)
 		    if (res.from === 'button') {// 来自页面内分享按钮
 		      console.log(res.target)
 		    }
@@ -187,88 +192,11 @@
 					url: "../../pages/news/news"
 				})
 			},
-			// 分享
-			// #ifdef APP-PLUS
-			shareDemo(platform, type, typeNum = 0) {
-				const { href, title, summary, imageUrl, miniProgram: { id, path, webUrl } } = SHARE_CONFIG;
-				uni.share({
-					provider: platform,
-					scene: type,
-					type: typeNum,
-					
-					href: href,
-					title: title,
-					summary: summary,
-					imageUrl: imageUrl,
-					miniProgram: {
-						id: id,
-						path: path,
-						type: 0,
-						webUrl: webUrl
-					},
-					success: function(res) {
-						console.log("分享success:" + res);
-					},
-					fail: function(err) {
-						console.log("分享fail:" + err);
-					}
-				});
-			},
-			// #endif
+		
+			
 			// 分享功能开始
 			share(index, event) {
-			
-				// 分享到微信
-				if (index === 1) {
-					// #ifdef APP-PLUS
-					this.shareDemo('weixin', 'WXSceneSession')
-					// #endif
-					// #ifdef H5
-					this.jweixin.ready(() => { //需在用户可能点击分享按钮前就先调用
-						this.jweixin.updateAppMessageShareData({
-							title: '公众号分享', // 分享标题
-							desc: '这是一个测试', // 分享描述
-							link: 'http://www.qfl168.cn/static/#/pages/news/news', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-							imgUrl: '/static/images/youhui.png', // 分享图标
-							success: function() {
-								// 设置成功
-								alert('分享成功')
-							}
-						})
-					});
-					// #endif
-				}
-				// 分享朋友圈
-				if (index === 2) {
-					// #ifdef APP-PLUS
-					this.shareDemo('weixin', 'WXSenceTimeline')
-					// #endif
-					// #ifdef H5
-					this.jweixin.ready(() => { //需在用户可能点击分享按钮前就先调用
-						this.jweixin.updateTimelineShareData({
-							title: '公众号分享', // 分享标题
-							link: 'http://www.qfl168.cn/static/#/pages/news/news', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-							imgUrl: '../../static/images/youhui.png', // 分享图标
-							success: function() {
-								// 设置成功
-								alert('分享成功')
-							}
-						})
-					});
-					// #endif
-				}
-				// 分享微博
-				if (index === 3) {
-					// #ifdef APP-PLUS
-					this.shareDemo('sinaweibo')
-					// #endif
-				}
-				// 分享QQ
-				if (index === 4) {
-					// #ifdef APP-PLUS
-					this.shareDemo('qq', '', 1)
-					// #endif
-				}
+				this.shareH5(index)
 			}
 		},
 	}

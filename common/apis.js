@@ -199,6 +199,12 @@ export const deletecarts = params => request.post('/api/ordersummary/me/deleteca
 export const withdrawal = params => request.get('/api/merchant/withdrawal', {
 	params
 })
+
+export const wxgzhtx = params => request.get('/api/tx/wxgzhtx', {
+	params
+})
+
+
 // 提现记录接口   参数 userinfo_id ==========
 export const withdrawalInfo = params => request.get('/api/merchant/withdrawalInfo', {
 	params

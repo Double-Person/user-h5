@@ -114,7 +114,12 @@
 				success: function(res) {
 					let saveStata = res.data;
 					
-					let isWeChatLogin = uni.getStorageInfoSync('isWeChatLogin') || false;
+					let isWeChatLogin = false;
+					try{
+						isWeChatLogin = uni.getStorageSync('isWeChatLogin');
+					}catch(e){
+						isWeChatLogin = false;
+					}
 					if (saveStata && !isWeChatLogin) {
 						try {
 							uni.getStorage({

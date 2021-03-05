@@ -84,17 +84,9 @@
 	export default {
 		data() {
 			return {
-				gradeList: [{
-						id: 1,
-						DJ: 'V1',
-						XFJ: 1,
-						SXF: '25%'
-					},
+				gradeList: [{ id: 1, DJ: 'V1', XFJ: 1, SXF: '25%' },
 					{
-						id: 2,
-						DJ: 'V2',
-						XFJ: 100,
-						SXF: '22%'
+						id: 2, DJ: 'V2', XFJ: 100, SXF: '22%'
 					},
 					{
 						id: 3,

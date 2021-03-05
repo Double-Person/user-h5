@@ -1,7 +1,16 @@
-import {autograph, wxwebLogin} from '@/common/apis.js';
-import { APPID, REDIRECT_URI, REDIRECT_URI_COMMON } from '@/common/commonConfig.js'
+import {
+	autograph,
+	wxwebLogin
+} from '@/common/apis.js';
+import {
+	APPID,
+	REDIRECT_URI,
+	REDIRECT_URI_COMMON,
+	SHARE_CONFIG
+} from '@/common/commonConfig.js'
+
 // #ifdef H5
-var jweixin = require('jweixin-module');	
+var jweixin = require('jweixin-module');
 // #endif
 const mixin = {
 	data() {
@@ -12,77 +21,84 @@ const mixin = {
 	mounted() {
 		// console.log('全局mixin');
 		// this.getJweixin()
-		
-		
+
 	},
 	onLoad(opt) {
-		console.log('全局mixin====')
+
 		let code = location.search.substr(1).split('&')[0].split('=')[1];
-		if(code) {
+		if (code) {
 			this.getOpenId()
 		}
 	},
-	
+
 	methods: {
+		
 		loginInMixin() {
 			console.log(this.getCodes())
-			if(this.getCodes()) {
+			if (this.getCodes()) {
 				this.getOpenId()
-			}else {
+			} else {
 				this.redirectHref()
 			}
 		},
 		// 获取code
 		redirectHref() {
-			window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid='+APPID+'&redirect_uri=' + encodeURIComponent(REDIRECT_URI) + '&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect'
+			window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + APPID + '&redirect_uri=' +
+				encodeURIComponent(REDIRECT_URI) + '&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect'
 		},
 		// 获取openid
 		getOpenId(type) {
 			const that = this;
 			let code = location.search.substr(1).split('&')[0].split('=')[1];
 			// 通过code获取用户openid
-			wxwebLogin({ code }).then(res => {
-				const {isExist, data} = res.returnMsg;
+			wxwebLogin({
+				code
+			}).then(res => {
+				const {
+					isExist,
+					data
+				} = res.returnMsg;
 				uni.setStorageSync('isExist', isExist);
 				uni.setStorageSync('isWeChatLogin', true);
-				if(isExist) { //、 存在用户信息  // data 为用户信息
+				if (isExist) { //、 存在用户信息  // data 为用户信息
 					uni.setStorageSync('userInfo', data)
 					uni.setStorageSync('USERINFO_ID', data.USERINFO_ID)
 					uni.setStorageSync('isWeChatLogin', false);
-					if(type == 'card') {
+					if (type == 'card') {
 						window.location.href = uni.getStorageSync('location')
-					}else{
+					} else {
 						window.location.href = REDIRECT_URI_COMMON + '/pages/index/index'
 					}
-				}else { // 不存在是为用户openid
+				} else { // 不存在是为用户openid
 					uni.setStorageSync('openIdBind', data)
-					try{
+					try {
 						this.isShowMask = true;
-					}catch(e){
+					} catch (e) {
 						//TODO handle the exception
 					}
 				}
-				
+
 			})
 		},
 		getCodes() {
 			let code = '';
-			if(location.search && location.search.substr(1)) {
+			if (location.search && location.search.substr(1)) {
 				code = location.search.substr(1).split('&')[0].split('=')[1];
-			}else {
+			} else {
 				this.redirectHref()
 			}
 			return code
 		},
-		
-		
-		mixinFn() {
-		},
-		getJweixin () {
+
+
+		mixinFn() {},
+		getJweixin() {
 			return false;
 			// #ifdef H5
-			var appid,timestamp,nonceStr,signature;
-			autograph({"url":'https://yflh.hkzhtech.com/static/'}).then(res=>{
+			var appid, timestamp, nonceStr, signature;
+			autograph({
+				"url": 'https://yflh.hkzhtech.com/static/'
+			}).then(res => {
 				// 引入微信JS-SDK
 				appid = res.appid;
 				timestamp = res.timestamp;
@@ -95,20 +111,20 @@ const mixin = {
 				timestamp: timestamp, // 必填，生成签名的时间戳
 				nonceStr: nonceStr, // 必填，生成签名的随机串
 				signature: signature, // 必填，签名
-				jsApiList: ['updateAppMessageShareData','updateTimelineShareData','scanQRCode','chooseWXPay'] // 必填，需要使用的JS接口列表
+				jsApiList: ['updateAppMessageShareData', 'updateTimelineShareData', 'scanQRCode', 'chooseWXPay'] // 必填，需要使用的JS接口列表
 			})
 			jweixin.scanQRCode({
 				needResult: 0, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
 				scanType: ['qrCode', 'barCode'], // 可以指定扫二维码还是一维码，默认二者都有
 				success: function(res) {
 					console.log(res)
-					
+
 				},
 				fail: function(err) {
 					console.log('错误', err)
 				}
 			});
-			
+
 			// #endif
 		}
 

@@ -43,11 +43,12 @@
 				<view class="title">
 					评价
 				</view>
-				<view class="item" v-for="(item,i) in Detail.varlist" :key="i">
-					<view class="left">
+				<view class="item" v-for="(item,i) in Detail.varlist" :key="i" v-if="Detail.varlist && Detail.varlist.length">
+					
+					<view class="left" v-if="item && item.FACEICON">
 						<image :src="imgBaseUrl + item.FACEICON" mode=""></image>
 					</view>
-					<view class="right">
+					<view class="right" v-if="item">
 						<view class="name">
 							{{item.USERNAME}}
 						</view>
@@ -64,6 +65,7 @@
 							商家回复：{{item.REPLY}}
 						</view>
 					</view>
+					
 				</view>
 			</view>
 		</view>
@@ -99,9 +101,14 @@
 				goodsId: opetion.shopId
 			}).then(res => {
 				this.Detail = res.returnMsg.newevaluate
-				let cons = this.Detail.varlist.filter(item => item.CONTENT)
-				this.Detail.varlist = cons
+				try{
+					let cons = this.Detail.varlist.filter(item => item.CONTENT)
+					this.Detail.varlist = cons 
+				}catch(e){
+					//TODO handle the exception
+				}
 			}).catch(err => {
+				console.log(err)
 				uni.showToast({
 					title: '请求失败！',
 					icon: 'none'

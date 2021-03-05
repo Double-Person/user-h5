@@ -250,6 +250,7 @@ export default {
 	mixins: [mixin],
 	data() {
 		return {
+			paySuccessObj: {},
 			BALANCE: '',
 			inputPwd: false,
 			tradePass: '',  // 交易密碼
@@ -450,6 +451,11 @@ export default {
 					
 					this.orderID = res.returnMsg.ORDERSUMMARY_ID;
 					this.payAmount = res.returnMsg.ACTUALPAY;
+					this.paySuccessObj = {
+						total: this.total,
+						ORDERNO: res.returnMsg.ORDERNO,
+						TIME: res.returnMsg.CREATETIME
+					}
 
 					if(this.submitTotal*1 <= 0) {
 						this.pay(0)
@@ -474,15 +480,7 @@ export default {
 			let arr = value.split('');
 			this.codeIndex = arr.length + 1;
 			this.codeArr = arr;
-			if (this.val == 888888) {
-				
-				// 余额支付
-				if (this.payMode === 0) {
-				}
-				// 银行卡支付
-				if (this.payMode === 3) {
-				}
-			}
+			
 		},
 		//清除验证码或者密码
 		clear() {
@@ -527,34 +525,26 @@ export default {
 			this.inputPwd = false;
 			shopBygoodList({ orderSummaryId: this.orderID, tradePass: this.tradePass }).then(res => {
 				this.tradePass = '';
-				if(res.returnMsg) {
-					if(res.returnMsg.status == '01') {
-						uni.showToast({
-							title: '交易密码不正确或者未设置交易密码',
-							icon: 'none'
-						})	
-					}else if(res.returnMsg.status == '02') {
-						uni.showToast({
-							title: '余额不足',
-							icon: 'none'
-						})	
-					}else{
-						
-						uni.showToast({
-							title: '支付成功',
-							icon: 'none'
-						})	
-						this.inputPwd = true
-
-						let order = res.returnMsg;
-						this.paySuccess(order)
-						
-					}
-				}else{
-					uni.showToast({
+				if(!res.returnMsg) {
+					return uni.showToast({
 						title: '系统错误稍后再试', icon: 'none'
 					})
 				}
+				
+				if(res.returnMsg.status == '01') {
+					uni.showToast({ title: '交易密码不正确或者未设置交易密码', icon: 'none' })	
+				}else if(res.returnMsg.status == '02') {
+					uni.showToast({ title: '余额不足', icon: 'none' })	
+				}else{
+					uni.showToast({ title: '支付成功', icon: 'none' })	
+					this.inputPwd = true
+					this.paySuccessObj.TYPES = 0;
+					let timer = setTimeout(() => {
+						this.paySuccess(this.paySuccessObj)
+					}, 1000);
+					
+				}
+				
 				
 			})
 		},
@@ -593,19 +583,15 @@ export default {
 				  },
 				  (res) =>{
 				  if(res.err_msg == "get_brand_wcpay_request:ok" ){
-					  this.payMaskHide = true; // 隐藏当前支付方式选择
+					  _self.payMaskHide = true; // 隐藏当前支付方式选择
 					  uni.showToast({
 						title: '支付成功!',
 						duration: 2000,
 						mask: true
 					  });
+					  _self.paySuccessObj.TYPES = 1
 					  let timer = setTimeout(() => {
-						let order = res.returnMsg;
-						if(order && Object.keys(order).length) {
-							_self.paySuccess(order)
-						}else {
-							clearTimeout(timer)
-						}
+						_self.paySuccess(_self.paySuccessObj)
 					  }, 1000);
 				  
 				  } else{
@@ -658,9 +644,7 @@ export default {
 		
 		// 支付成功
 		paySuccess(order) {
-			order.total = this.total;
-			delete order.zfb;
-			delete order.wx;
+		
 			setTimeout(() => {
 				uni.redirectTo({
 					url: '../payComplete/payComplete?orderInfo=' + JSON.stringify(order)

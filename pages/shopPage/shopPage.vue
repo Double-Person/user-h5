@@ -20,7 +20,6 @@
 			</view>
 		</view>
 		<!-- 标题 -->
-
 		<view class="shopPage-shopTitle">
 			<view class="shopPage-shopTitle-top">
 				<view class="img">
@@ -220,6 +219,8 @@
 </template>
 
 <script>
+	import mixin from '@/mixin/mixin.js'
+	import share from '@/mixin/share.js'
 	import {
 		SHARE_CONFIG
 	} from '@/common/commonConfig.js'
@@ -237,6 +238,7 @@
 	} from "@/common/apis.js";
 	export default {
 		name: 'ShopPage',
+		mixins: [mixin, share],
 		data() {
 			return {
 				computedListData: [],
@@ -299,6 +301,7 @@
 			h5Copy
 			// #endif
 		},
+		
 		methods: {
 			mergeList() {
 				
@@ -640,115 +643,8 @@
 			
 			// 分享功能开始
 			share(index) {
-				const {
-					href,
-					title,
-					summary,
-					imageUrl,
-					link
-				} = SHARE_CONFIG
-				// #ifdef APP-PLUS
-				// 分享到微信
-				if (index === 1) {
-					uni.share({
-						provider: "weixin",
-						scene: "WXSceneSession",
-						type: 0,
-						href: href,
-						title: title,
-						summary: summary,
-						imageUrl: imageUrl,
-						success: function(res) {
-							console.log("success:" + JSON.stringify(res));
-						},
-						fail: function(err) {
-							console.log("fail:" + JSON.stringify(err));
-						}
-					});
-				}
-				// 分享朋友圈
-				if (index === 2) {
-					uni.share({
-						provider: "weixin",
-						scene: "WXSenceTimeline",
-						type: 0,
-						href: href,
-						title: title,
-						summary: summary,
-						imageUrl: imageUrl,
-						success: function(res) {
-							console.log("success:" + JSON.stringify(res));
-						},
-						fail: function(err) {
-							console.log("fail:" + JSON.stringify(err));
-						}
-					});
-				}
-				// #endif
-
-				// #ifdef H5
-				if (index === 1) {
-					this.jweixin.ready(() => { //需在用户可能点击分享按钮前就先调用
-						this.jweixin.updateAppMessageShareData({
-							title: title, // 分享标题
-							desc: summary, // 分享描述
-							link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-							imgUrl: imageUrl, // 分享图标
-							success: function() {
-								// 设置成功
-								alert('分享成功')
-							}
-						})
-					})
-				}
-				if (index === 2) {
-					this.jweixin.ready(() => { //需在用户可能点击分享按钮前就先调用
-						this.jweixin.updateTimelineShareData({
-							title: title, // 分享标题
-							link: link, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-							imgUrl: imageUrl, // 分享图标
-							success: function() {
-								// 设置成功
-								alert('分享成功')
-							}
-						})
-					})
-				}
-				// #endif
-				// 分享微博
-				if (index === 3) {
-					uni.share({
-						provider: "sinaweibo",
-						type: 0,
-						href: href,
-						title: title,
-						summary: summary,
-						imageUrl: imageUrl,
-						success: function(res) {
-							console.log("success:" + JSON.stringify(res));
-						},
-						fail: function(err) {
-							console.log("fail:" + JSON.stringify(err));
-						}
-					});
-				}
-				// 分享QQ
-				if (index === 4) {
-					uni.share({
-						provider: "qq",
-						type: 1,
-						href: href,
-						title: title,
-						summary: summary,
-						imageUrl: imageUrl,
-						success: function(res) {
-							console.log("success:" + JSON.stringify(res));
-						},
-						fail: function(err) {
-							console.log("fail:" + JSON.stringify(err));
-						}
-					});
-				}
+				
+				this.shareH5(index)
 			}
 		},
 		mounted() {

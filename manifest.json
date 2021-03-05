@@ -207,8 +207,10 @@
             }
         },
         "router" : {
-            "mode" : "hash"
-        }
+            "mode" : "hash",
+            "base" : "qflhadmin"
+        },
+        "title" : "qflhadmin"
     },
     "channel_list" : [
         {

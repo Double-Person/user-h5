@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "image-tools": "^1.2.1",
-    "jweixin-module": "^1.6.0",
+    "jweixin-module": "^1.4.1",
     "luch-request": "^3.0.4",
     "uni-request": "^1.0.2"
   }

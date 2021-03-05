@@ -109,7 +109,9 @@
 		wxtx,
 		alitx,
 		backCardInfo,
-		imgBaseUrl
+		imgBaseUrl,
+		
+		wxgzhtx
 	} from "@/common/apis.js";
 	
 	import mixin from '@/mixin/mixin.js'
@@ -176,7 +178,9 @@
 
 
 			// 提现
-			getWithdrawal() {				
+			getWithdrawal() {
+				this.openid = this.userInfo.WX;
+				
 				if (this.kbalance == 0) {
 					return uni.showToast({ title: '暂无可提现金额', icon: 'none' })
 				}
@@ -246,7 +250,7 @@
 			
 			// 微信提现
 			weChatWithdrawal(obj) {
-				wxtx(obj).then(res => {
+				wxgzhtx(obj).then(res => {
 					if (res.msgType == 0) {
 						uni.showToast({
 							title: '提现成功',
@@ -299,9 +303,7 @@
 			},
 			
 			// 获取微信openId
-			getOpenIdByWchat() {
-				const that = this;
-				
+			getOpenIdByWchat() {				
 				if(this.userInfo.WX) {
 					this.openid = this.userInfo.WX
 				}else {

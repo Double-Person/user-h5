@@ -23,7 +23,9 @@ export const REDIRECT_URI_COMMON = urls;
 
 // 分享文件配置
 export const SHARE_CONFIG = {
-	href: "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzI0ODY3NzQ3MQ==&scene=124#wechat_redirect",
+	// href: "https://yflh.hkzhtech.com/qflhadmin",
+	href: `https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzI4NjExNTQyOA==&scene=123&uin=&key=&devicetype=Windows+10+x64&version=63010043&lang=zh_CN&a8scene=1&fontgear=2`,
+	
 	title: "趣分利",
 	summary: "我正在使用趣分利，赶紧跟我一起来体验！",
 	imageUrl: require('@/static/images/logo.png'),
