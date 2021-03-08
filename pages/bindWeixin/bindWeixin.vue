@@ -38,6 +38,7 @@
 		bandWX,
 		sendCode
 	} from "@/common/apis.js"
+	import share from '@/mixin/share.js'
 	export default {
 		data() {
 			return {
@@ -53,6 +54,10 @@
 		},
 		components: {
 			commonHeader
+		},
+		mixins: [share],
+		onLoad() {
+			this.otherPage();
 		},
 		mounted() {
 			uni.getStorage({

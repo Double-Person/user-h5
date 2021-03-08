@@ -10,6 +10,7 @@
 </template>
 
 <script>
+	import share from '@/mixin/share.js'
 	import { getNewUserInfo } from '@/common/apis.js'
 	
 	import commonHeader from"@/components/common-header/common-header";
@@ -21,6 +22,10 @@
 		},
 		components:{
 			commonHeader
+		},
+		mixins: [share],
+		onLoad() {
+			this.otherPage();
 		},
 		mounted () {
 			this.getInitData()

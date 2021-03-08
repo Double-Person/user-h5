@@ -46,6 +46,7 @@
 </template>
 
 <script>
+	import share from '@/mixin/share.js'
 	// header
 	import commonHeader from "@/components/common-header/common-header";
 	// tabbar
@@ -69,6 +70,10 @@
 		components: {
 			commonHeader,
 			tabbar
+		},
+		mixins: [share],
+		onLoad() {
+			this.otherPage();
 		},
 		computed: {
 			startDate() {

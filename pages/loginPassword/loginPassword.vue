@@ -17,6 +17,7 @@
 <script>
 	import md5 from "@/common/md5.js"
 	import commonHeader from "@/components/common-header/common-header"
+	import share from '@/mixin/share.js'
 	import {
 		setPassword
 	} from "@/common/apis.js"
@@ -31,6 +32,10 @@
 		},
 		components: {
 			commonHeader
+		},
+		mixins: [share],
+		onLoad() {
+			this.otherPage();
 		},
 		methods: {
 			submit() {

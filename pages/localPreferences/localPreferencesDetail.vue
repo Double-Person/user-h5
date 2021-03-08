@@ -62,6 +62,7 @@
 		findById,
 		imgBaseUrl
 	} from "@/common/apis.js";
+	import share from '@/mixin/share.js'
 	export default {
 		data() {
 			return {
@@ -69,11 +70,13 @@
 				imgBaseUrl: imgBaseUrl,
 			};
 		},
+		mixins: [share],
 		components: {
 			uniRate
 		},
 
 		onLoad(options) {
+			this.otherPage();
 			uni.showLoading({
 				title: '加载中',
 				mask: true

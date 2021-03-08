@@ -149,12 +149,19 @@
 </template>
 
 <script>
+	import share from '@/mixin/share.js'
 	export default {
 		data() {
 			return {
 
 			};
 		},
+		
+		mixins: [share],
+		onLoad() {
+			this.otherPage();
+		},
+		
 		methods:{
 			backPage(){
 				// #ifdef H5

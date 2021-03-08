@@ -54,6 +54,7 @@
 </template>
 
 <script>
+	import share from '@/mixin/share.js'
 	// header
 	import commonHeader from "@/components/common-header/common-header";
 	import {INDEX_KEY, CONVERSION_KEY} from "@/common/commonConfig.js"
@@ -89,8 +90,11 @@
 		components: {
 			commonHeader
 		},
+		mixins: [share],
+		
 		onLoad() {
 			this.getPoint()
+			this.otherPage();
 		},
 		methods: {
 			// 获取输入手机号

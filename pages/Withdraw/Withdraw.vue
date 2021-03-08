@@ -12,11 +12,16 @@
 </template>
 
 <script>
+	import share from '@/mixin/share.js'
 	export default {
 		data() {
 			return {
 				headerTitl:'提现'
 			}
+		},
+		mixins: [share],
+		onLoad() {
+			this.otherPage();
 		},
 		methods: {
 			backPage() {

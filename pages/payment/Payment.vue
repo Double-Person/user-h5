@@ -7,8 +7,3 @@
 <script>
 </script>
 
-<style lang="less" scoped>
-	.payment {
-		
-	}
-</style>

@@ -15,6 +15,7 @@
 </template>
 
 <script>
+	import share from '@/mixin/share.js'
 	import commonHeader from "@/components/common-header/common-header"
     import {transaction, pwdInfo} from "@/common/apis.js"
 	export default {
@@ -29,6 +30,10 @@
 		components:{commonHeader},
 		mounted() {
 			this.check()
+		},
+		mixins: [share],
+		onLoad() {
+			this.otherPage();
 		},
 		methods:{
 			// userinfo_id    USERINFO_ID

@@ -79,6 +79,7 @@
 </template>
 
 <script>
+	import share from '@/mixin/share.js'
 	// header
 	import commonHeader from "@/components/common-header/common-header";
 	import tabbar from "@/components/common-tabbar/common-tabbar";
@@ -102,7 +103,10 @@
 			commonHeader,
 			tabbar
 		},
+		mixins: [share],
+	
 		onLoad() {
+			this.otherPage();
 			this.cardStata = getApp().globalData.cardStata;
 		},
 		mounted() {

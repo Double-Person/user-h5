@@ -34,6 +34,7 @@
 </template>
 
 <script>
+	import share from '@/mixin/share.js'
 	// header
 	import commonHeader from "@/components/common-header/common-header";
     import {getAddress,delAddress,setDeAdress} from"@/common/apis.js";
@@ -49,6 +50,7 @@
 		components:{
 			commonHeader
 		},
+		mixins: [share],
 		methods:{
             // 前往新增地址
 			goNewAddress(){
@@ -114,6 +116,7 @@
         },
         onLoad(e){
             this.state = e.state
+			this.otherPage();
         }
 	}
 </script>

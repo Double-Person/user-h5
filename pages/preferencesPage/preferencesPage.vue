@@ -32,6 +32,7 @@
 </template>
 
 <script>
+	import share from '@/mixin/share.js'
 	import commonHeader from"@/components/common-header/common-header";
 	// 评分组件
 	import uniRate from '@/components/uni-rate/uni-rate.vue';
@@ -43,6 +44,12 @@
                 USERINFO_ID:''
 			}
 		},
+		
+		mixins: [share],
+		onLoad() {
+			this.otherPage();
+		},
+		
 		methods: {
             // 前往商家
 			goShop(shopId){

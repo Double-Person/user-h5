@@ -25,6 +25,7 @@
 	    bandApliy,
 	    sendCode,transfer,personal
 	} from "@/common/apis.js"
+	import share from '@/mixin/share.js'
 	export default {
 	    data() {
 	        return {
@@ -43,6 +44,10 @@
 	    components: {
 	        commonHeader
 	    },
+		mixins: [share],
+		onLoad() {
+			this.otherPage();
+		},
 	    methods: {
 	        goBack() {
 				var data = {

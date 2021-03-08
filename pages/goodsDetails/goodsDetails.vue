@@ -77,6 +77,7 @@
 <script>
 	import commonHeader from "@/components/common-header/common-header";
 	import tabbar from "@/components/common-tabbar/common-tabbar";
+	import share from '@/mixin/share.js'
 	import {
 		addCarts,
 		shopDetails,
@@ -94,8 +95,11 @@
 			tabbar,
 			commonHeader
 		},
+		mixins: [share],
+	
 
 		onLoad(opetion) {
+			this.otherPage();
 			this.goodsId = opetion.shopId;
 			shopDetails({
 				goodsId: opetion.shopId

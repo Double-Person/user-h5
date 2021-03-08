@@ -48,6 +48,7 @@
 </template>
 
 <script>
+	import share from '@/mixin/share.js'
 	// header
 	import commonHeader from "@/components/common-header/common-header";
 	// tabbar
@@ -82,6 +83,10 @@
 		},
 		mounted() {
 			this.getList(0)
+		},
+		mixins: [share],
+		onLoad() {
+			this.otherPage();
 		},
 		methods: {
 			payType(TYPES) {

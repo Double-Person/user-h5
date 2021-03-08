@@ -92,6 +92,7 @@
 	// 城市选择
 	import pickerAddress from '@/components/pickerAddress/pickerAddress.vue';
 	import mixin from '@/mixin/mixin.js'
+	import share from '@/mixin/share.js'
 	// 引入请求接口
 	import {
 		pushShop,
@@ -112,7 +113,7 @@
 			pickerAddress,
 			specialBanner
 		},
-		mixins: [mixin],
+		mixins: [mixin, share],
 		data() {
 			return {
 				passCity2Loca: '',
@@ -146,6 +147,10 @@
 				bannerList: [],
 				itemList: [] //分类列表
 			};
+		},
+
+		onLoad() {
+			this.otherPage();
 		},
 
 		async created() {

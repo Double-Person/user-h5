@@ -183,6 +183,7 @@
 </template>
 
 <script>
+	import share from '@/mixin/share.js'
 	// header
 	import commonHeader from "@/components/common-header/common-header";
 	import mixin from '@/mixin/mixin.js'
@@ -213,7 +214,7 @@
 				default: true
 			}
 		},
-		mixins: [mixin],
+		mixins: [mixin, share],
 		data() {
 			return {
 				NUMBER: '',
@@ -618,6 +619,7 @@
 			}
 		},
 		onLoad(e) {
+			this.otherPage();
 			this.shopName = e.shopName;
 			this.shopId = e.shopId;
 			let passMoney = Number(e.money || 0);

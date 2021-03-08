@@ -72,6 +72,7 @@
 	import tabbar from "@/components/common-tabbar/common-tabbar";
     import {addEvaluate, baseUrl, imgBaseUrl} from "@/common/apis.js";
     import { pathToBase64, base64ToPath } from 'image-tools';
+	import share from '@/mixin/share.js'
 	export default {
 		data() {
 			return {
@@ -93,7 +94,10 @@
 			commonHeader,
 			tabbar
 		},
+		mixins: [share],
+		
 		onLoad(e){
+			this.otherPage();
 			this.ORDERSUMMARY_ID = e.ORDERSUMMARY_ID
 			if(e.from == 'order') {
 				this.fromPath = e.from

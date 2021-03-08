@@ -44,6 +44,7 @@
 	// tabbar
 	import tabbar from "@/components/common-tabbar/common-tabbar";
     import {collections,delCollec, imgBaseUrl} from"@/common/apis.js"
+	import share from '@/mixin/share.js'
 	export default {
 		data() {
 			return {
@@ -55,6 +56,10 @@
 		components:{
 			commonHeader,
 			tabbar
+		},
+		mixins: [share],
+		onLoad() {
+			this.otherPage();
 		},
 		methods:{
 			// 去店铺

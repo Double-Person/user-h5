@@ -13,7 +13,7 @@
 					<view>
 						<text class="iconfont icon-lingdang-xianxing" @tap="goNews"></text>
 					</view>
-					<view>
+					<view v-if="false">
 						<text class="iconfont icon-fenxiang" @tap="maskState=true"></text>
 					</view>
 				</view>
@@ -264,6 +264,7 @@
 			};
 		},
 		onLoad(e) {
+			this.shareH5Mixin();
 
 			uni.showLoading({ title: '加载中', mask: true })
 			// 获取店铺id
@@ -340,7 +341,6 @@
 			},
 			// 发送请求添加到购物车
 			saveCard(data) {
-				console.log('添加购物车',data)
 				addCarts(data).then(({ msgType }) => {
 					if (msgType == 0) {
 						uni.showToast({ title: '添加购物车成功' })
@@ -350,11 +350,7 @@
 				})
 			},
 			getMoreInfo() {
-				// uni.navigateTo({
-				// 	url: '../shopDetails/shopDetails?id=' + this.shopId
-				// })
 				this.open = true
-				// const res = await getMoreShopInfo({ SHOP_ID: this.shopId })
 			},
 			getClose() {
 				this.open = false
@@ -463,52 +459,18 @@
 			// 拨打电话
 			callPhone() {
 				uni.makePhoneCall({
-					phoneNumber: this.vendor.PHONE //仅为示例
+					phoneNumber: this.vendor.PHONE 
 				});
 			},
 			// 打开微信
 			addWeiXin() {
-				let _this = this;
-				// 判断平台
-				// #ifdef APP-PLUS
-				if (plus.os.name == "Android") {
-					plus.runtime.launchApplication({
-							name: "微信",
-							pname: "com.tencent.mm",
-							scheme: "weixin://"
-						},
-						function(e) {
-							uni.showToast({
-								title: "您可能还未安装该应用",
-								duration: 2000,
-								icon: "none"
-							});
-						}
-					);
-				}
-				// #endif
+				
 			},
 			// 复制微信号
 			copy() {
-				// #ifdef APP-PLUS
-				uni.setClipboardData({
-					data: this.vendor.WX,
-					success() {
-						uni.showToast({
-							title: "复制成功"
-						});
-					},
-					fail() {
-						uni.showToast({
-							title: "复制失败"
-						});
-					}
-				});
-				// #endif
 				// #ifdef H5
 				let content = this.vendor.WX; // 复制内容，必须字符串，数字需要转换为字符串
 				const result = h5Copy(content);
-
 				if (result) {
 					uni.showToast({
 						title: '复制成功',
@@ -644,7 +606,7 @@
 			// 分享功能开始
 			share(index) {
 				
-				this.shareH5(index)
+				this.shareH5Mixin(index)
 			}
 		},
 		mounted() {

@@ -54,6 +54,7 @@
 	import specialBanner from '@/components/specialBanner.vue'
 	// 评分组件
 	import uniRate from '@/components/uni-rate/uni-rate.vue'
+	import share from '@/mixin/share.js'
 	import {
 		pushShop,
 		getBanner,
@@ -87,8 +88,10 @@
 			tabbar,
 			uniRate
 		},
+		mixins: [share],
 
 		onLoad(e) {
+			this.otherPage();
 			var obj = {
 				longitude: e.longitude,
 				latitude: e.latitude,

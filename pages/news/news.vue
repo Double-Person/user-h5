@@ -62,6 +62,7 @@
 </template>
 
 <script>
+	import share from '@/mixin/share.js'
 	// 引入tabbar
 	import tabbar from "@/components/common-tabbar/common-tabbar";
 	// 引入公用头部
@@ -79,6 +80,10 @@
 				kefuData: []
 
 			};
+		},
+		mixins: [share],
+		onLoad() {
+			this.otherPage();
 		},
 		components: {
 			commonHeader,

@@ -60,6 +60,7 @@
 
 <script>
 	import commonHeader from "@/components/common-header/common-header";
+	import share from '@/mixin/share.js'
 	import {
 		updeteShopBank
 	} from '@/common/apis.js';
@@ -76,6 +77,8 @@
 		components: {
 			commonHeader
 		},
+		mixins: [share],
+		
 		
 		methods: {
 			goAdd() {
@@ -115,6 +118,7 @@
 			}
 		},
 		onLoad(info) {
+			this.otherPage();
 			// 
 			let isCard = (Object.keys(info.info || {})).length ? true: false
 			// return false;

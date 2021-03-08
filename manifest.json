@@ -185,20 +185,13 @@
         "devServer" : {
             // "port": 8000,  
             "disableHostCheck" : true,
-            // "proxy" : {
-            //     "/qfl" : {
-            //         "target" : "https://yflh.hkzhtech.com/qufl/",
-            //         "changeOrigin" : true, // 允许跨域
-            //         "secure" : true, // 开启HTTPS
-            //         "pathRewrite" : {
-            //             "^/qfl" : ""
-            //         }
-            //     }
-            // },
+          
             "port" : 8080,
             "https" : false
         },
-        "domain" : "https://yflh.hkzhtech.com/qufl/",
+        // "domain" : "https://yflh.hkzhtech.com/qufl/",
+        "domain" : "https://qfl.qfl168.cn/qflhadmin/",
+		
         "sdkConfigs" : {
             "maps" : {
                 "qqmap" : {

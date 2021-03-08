@@ -20,6 +20,7 @@
 </template>
 
 <script>
+	import share from '@/mixin/share.js'
 	// header
 	import commonHeader from "@/components/common-header/common-header";
 	// 引入tabbar
@@ -35,10 +36,13 @@
 			commonHeader,
 			tabbar
 		},
+		mixins: [share],
+		
 		onLoad(option) {
 			let {id, USERMESSAGE_ID} = option
 			this.getMessageInfo(id)
 			this.readMsg(USERMESSAGE_ID)
+			this.otherPage();
 		},
 		methods : {
 			getMessageInfo(id) {

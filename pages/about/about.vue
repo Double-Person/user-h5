@@ -20,6 +20,7 @@
 </template>
 
 <script>
+	import share from '@/mixin/share.js'
 	// header
 	import commonHeader from "@/components/common-header/common-header";
 	import {
@@ -34,7 +35,9 @@
 		},
 		mounted() {
 			this.getInitData()
+			this.otherPage();
 		},
+		mixins: [share],
 		methods: {
 			async getInitData() {
 				const {

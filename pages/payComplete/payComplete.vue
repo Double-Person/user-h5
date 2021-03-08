@@ -34,6 +34,7 @@
 </template>
 
 <script>
+	import share from '@/mixin/share.js'
 	// header
 	import commonHeader from "@/components/common-header/common-header";
 	export default {
@@ -45,7 +46,10 @@
 		components: {
 			commonHeader
 		},
+		mixins: [share],
+		
 		onLoad(opt) {
+			this.otherPage();
 			if (opt.orderInfo) {
 				this.info = JSON.parse(opt.orderInfo);
 			}

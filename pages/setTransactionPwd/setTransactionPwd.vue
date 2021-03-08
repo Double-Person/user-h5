@@ -14,6 +14,7 @@
 </template>
 
 <script>
+	import share from '@/mixin/share.js'
 	import commonHeader from "@/components/common-header/common-header";
 	import {setPassword} from "@/common/apis.js";
 	export default {
@@ -23,6 +24,10 @@
 				pwd1:'',
                 USERINFO_ID:''
 			};
+		},
+		mixins: [share],
+		onLoad() {
+			this.otherPage();
 		},
 		components:{commonHeader},
 		methods:{

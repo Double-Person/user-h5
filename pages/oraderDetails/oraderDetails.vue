@@ -71,6 +71,7 @@
 </template>
 
 <script>
+	import share from '@/mixin/share.js'
 	// header
 	import commonHeader from "@/components/common-header/common-header";
 	// tabbar 
@@ -90,6 +91,8 @@
 			commonHeader
 			,tabbar
 		},
+		mixins: [share],
+	
         methods:{
 			computedLength (list) {
 				
@@ -163,6 +166,7 @@
             }
         },
         onLoad(e) {
+			this.otherPage();
            queryOrder({ORDERSUMMARY_ID:e.orderID}).then(res => {
 
 			   this.orderData = res.returnMsg.order

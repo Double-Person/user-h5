@@ -3,8 +3,7 @@
 		<!-- header -->
 		<commonHeader headerTitl="我的评价" xingHide=true lingHide=true fenxiangHide=true></commonHeader>
 		<!-- 内容开始 -->
-		
-		 
+ 
 		<view v-if="myEvaluateList.length == 0" style="text-align: center;color: #999;">
             暂无评价
         </view>
@@ -50,6 +49,7 @@
 </template>
 
 <script>
+	import share from '@/mixin/share.js'
 	// header
 	import commonHeader from "@/components/common-header/common-header";
 	// tabbar
@@ -60,6 +60,7 @@
 			commonHeader,
 			tabbar
 		},
+		mixins: [share],
 		data() {
 			return {
 				imgBaseUrl: imgBaseUrl,
@@ -115,6 +116,7 @@
 		
         onLoad() {
            this.getList()
+		   this.otherPage();
         }
 	}
 </script>

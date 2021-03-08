@@ -27,6 +27,7 @@
 		addShopBank
 	} from '@/common/apis.js'
 	import commonHeader from "@/components/common-header/common-header";
+	import share from '@/mixin/share.js'
 	export default {
 		data() {
 			return {
@@ -36,8 +37,12 @@
 				cardState: false
 			};
 		},
+		mixins: [share],
 		components: {
 			commonHeader
+		},
+		onLoad() {
+			this.otherPage();
 		},
 		methods: {
 			// 获取姓名

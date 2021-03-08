@@ -130,6 +130,7 @@
 </template>
 
 <script>
+	import share from '@/mixin/share.js'
 	// 引入tabbar
 	import tabbar from "@/components/common-tabbar/common-tabbar";
 	import testCode from '@/components/testCode/testCode';
@@ -157,7 +158,9 @@
 			tabbar,
 			testCode
 		},
+		mixins: [share],
 		onLoad() {
+			this.otherPage();
 			// this.isPwd = getApp().globalData.isPwd;
 			this.judgeTradingPwd()
 			try {
@@ -168,7 +171,7 @@
 			}
 
 		},
-
+			
 		methods: {
 
 			judgeTradingPwd() {

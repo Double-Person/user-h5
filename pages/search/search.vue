@@ -4,7 +4,7 @@
 			<text class="iconfont icon-zuojiantou" @tap="backPage"></text>
 			<view class="search-input">
 				<text class="iconfont icon-sousuo"></text>
-				<input @blur="searchText" focus="true" type="text" :value="inputValue" placeholder="搜索关键字" placeholder-style="color:#999;fontSize:28rpx;"/>
+				<input @blur="searchText" focus="true" type="text" :value="inputValue" placeholder="搜索关键字" placeholder-style="color:#999;fontSize:28rpx;" />
 			</view>
 			<view class="btn" @tap="search">
 				搜索
@@ -18,78 +18,80 @@
 					<view class="">{{item.address}}</view>
 				</view>
 			</view>
-			<!-- 清空历史 -->
-<!-- 			<view class="search-record">
-				<text @tap="clearHistory"><text class="iconfont icon-qingkongshanchu"></text>清空历史记录</text>
-			</view> -->
+
 		</view>
 		<!-- 搜索信息 -->
-		
+
 	</view>
 </template>
 
 <script>
-    import {search} from "@/common/apis.js"
+	import share from '@/mixin/share.js'
+	import {
+		search
+	} from "@/common/apis.js"
 	export default {
 		data() {
 			return {
-				inputValue:'',
-				historyArr:[]
+				inputValue: '',
+				historyArr: []
 			};
 		},
-		methods:{
+		methods: {
 			// 获取搜索框内容
-			searchText(e){
+			searchText(e) {
 				console.log(e.detail.value)
 				this.inputValue = e.detail.value;
 				this.search()
 			},
 			// 搜索
-			search(){
-				if(!this.inputValue){
-                    uni.showToast({
-                        title:"请输入搜索内容!",
-                        icon:"none",
-                        mask:true
-                    })
+			search() {
+				if (!this.inputValue) {
+					uni.showToast({
+						title: "请输入搜索内容!",
+						icon: "none",
+						mask: true
+					})
 					return false
 				}
-                search({name:this.inputValue}).then(res => {
-                    if(res.returnMsg.status=='00'){
-                        if(res.returnMsg.shop.length){
-                            this.historyArr = res.returnMsg.shop
-                        }else{
-                           uni.showToast({
-                               title:"未找到相关信息!",
-                               icon:"none",
-                               duration:2000,
-                               mask:true
-                           })
-                        }
-                    }else{
-                       uni.showToast({
-                           title:"搜索失败!",
-                           icon:"none",
-                           duration:2000,
-                           mask:true
-                       })
-                    }
-                })
-                // 历史存入
-                // this.historyArr.push(this.inputValue);
-                // uni.setStorage({
-                // 	key:'history',
-                // 	data:JSON.stringify(this.historyArr),
-                // 	success:()=>{
-                // 		// 清空搜索框
-                // 		this.inputValue ='';
-                // 	}
-                // })
-                // console.log('搜索')
-                // uni.showToast({
-                // 	title:"未查询到该条内容！！！",
-                // 	// icon:'none'
-                // })
+				search({
+					name: this.inputValue
+				}).then(res => {
+					if (res.returnMsg.status == '00') {
+						if (res.returnMsg.shop.length) {
+							this.historyArr = res.returnMsg.shop
+						} else {
+							uni.showToast({
+								title: "未找到相关信息!",
+								icon: "none",
+								duration: 2000,
+								mask: true
+							})
+						}
+					} else {
+						uni.showToast({
+							title: "搜索失败!",
+							icon: "none",
+							duration: 2000,
+							mask: true
+						})
+					}
+				})
+				// 历史存入
+				// this.historyArr.push(this.inputValue);
+				// uni.setStorage({
+				// 	key:'history',
+				// 	data:JSON.stringify(this.historyArr),
+				// 	success:()=>{
+				// 		// 清空搜索框
+				// 		this.inputValue ='';
+				// 	}
+				// })
+				// console.log('搜索')
+				// uni.showToast({
+				// 	title:"未查询到该条内容！！！",
+				// 	// icon:'none'
+				// })
 			},
 			// 清空历史记录
 			// clearHistory(){
@@ -100,12 +102,12 @@
 			// 		}
 			// 	});
 			// },
-            // 前往店铺
-            goShop(shopId){
-                uni.navigateTo({
-                    url:"../shopPage/shopPage?shopId="+shopId
-                })
-            },
+			// 前往店铺
+			goShop(shopId) {
+				uni.navigateTo({
+					url: "../shopPage/shopPage?shopId=" + shopId
+				})
+			},
 			// 返回
 			backPage() {
 				// #ifdef H5
@@ -128,34 +130,27 @@
 				// #endif
 				// 修复小程序app返回退出应用bug(无法返回重定向至首页)
 				var pagelength = getCurrentPages();
-				if(pagelength.length===1){
+				if (pagelength.length === 1) {
 					var path = pagelength[0].route;
 					// console.log(path)
 					uni.reLaunch({
-						url:'/'+path
+						url: '/' + path
 					})
-				}else{
+				} else {
 					uni.navigateBack(1)
 				}
 			},
 		},
+		mixins: [share],
 		onLoad() {
-			// 获取本地历史记录
-			// uni.getStorage({
-			//     key: 'history',
-			//     success:  (res)=> {
-			// 		if(res.data){
-			// 			this.historyArr = JSON.parse(res.data);
-			// 		}
-			//     }
-			// });
-		}
+			this.otherPage();
+		},
 	}
 </script>
 
 <style lang="less">
-	.search{
-		.search-top{
+	.search {
+		.search-top {
 			height: 145rpx;
 			background: url(../../static/images/bg1.jpg) no-repeat;
 			background-size: cover;
@@ -169,11 +164,13 @@
 			/* #endif */
 			align-items: center;
 			justify-content: space-between;
-			>.iconfont{
+
+			>.iconfont {
 				font-size: 40rpx;
 				color: #fff;
 			}
-			.search-input{
+
+			.search-input {
 				width: 75%;
 				height: 70rpx;
 				background: #fff;
@@ -181,24 +178,29 @@
 				border-radius: 10rpx;
 				align-items: center;
 				margin-left: 30rpx;
-				.iconfont{
+
+				.iconfont {
 					font-size: 30rpx;
 					color: #999;
 					margin: 0 30rpx;
 				}
-				.input{
+
+				.input {
 					flex: 1;
 					color: #000;
 				}
 			}
-			.btn{
+
+			.btn {
 				font-size: 28rpx;
 				color: #fff;
 			}
 		}
-		.search-history{
+
+		.search-history {
 			padding: 0 30rpx;
-			.item{
+
+			.item {
 				color: #666;
 				font-size: 28rpx;
 				height: 90rpx;
@@ -208,13 +210,15 @@
 				justify-content: space-between;
 			}
 		}
-		.search-record{
+
+		.search-record {
 			font-size: 28rpx;
 			color: #666;
 			padding-right: 30rpx;
 			text-align: right;
 			margin-top: 50rpx;
-			text{
+
+			text {
 				margin-right: 10rpx;
 			}
 		}

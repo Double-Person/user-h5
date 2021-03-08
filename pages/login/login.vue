@@ -82,6 +82,7 @@
 	} from "@/common/apis.js";
 	import { COMMON_URL, APPID, REDIRECT_URI, INDEX_KEY, CONVERSION_KEY } from '@/common/commonConfig.js';
 	import mixin from '@/mixin/mixin.js'
+	import share from '@/mixin/share.js'
 
 	export default {
 		data() {
@@ -103,7 +104,7 @@
 				saveObj: '',
 			}
 		},
-		mixins: [mixin],
+		mixins: [mixin, share],
 		mounted() {	
 			const that = this;
 			// 获取定位
@@ -160,6 +161,7 @@
 			if(code) {
 				this.getOpenId()
 			}
+			this.otherPage();
 		},
 		
 		
@@ -244,7 +246,6 @@
 							success: (res) => {
 								console.log('===', res.data)
 								if (res.data) {
-									// window.location.href = 'https://yflh.hkzhtech.com/qflhadmin/#/pages/index/index'
 									uni.navigateTo({
 										url: '../index/index'
 									})
@@ -308,7 +309,7 @@
 					key: 'name',
 					data: JSON.stringify(this.saveObj),
 					success() {
-						window.location.href = 'https://yflh.hkzhtech.com/qflhadmin/#/pages/index/index'
+						window.location.href = 'https://qfl.qfl168.cn/qflhadmin/#/pages/index/index'
 					},
 					fail() {
 						uni.showToast({ title: '保存失败', icon: 'none' })
@@ -327,7 +328,7 @@
 					},
 					complete() {
 						this.rememberPwdHide = true;
-						window.location.href = 'https://yflh.hkzhtech.com/qflhadmin/#/pages/index/index'
+						window.location.href = 'https://qfl.qfl168.cn/qflhadmin/#/pages/index/index'
 					}
 				})
 

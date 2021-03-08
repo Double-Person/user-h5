@@ -242,26 +242,21 @@
 		</view>
 	</view>
 </template>
-<script>
-import { getNewUserInfo } from '@/common/apis.js';
 
+<script>
+	import share from '@/mixin/share.js'
+import { getNewUserInfo } from '@/common/apis.js';
 import commonHeader from '@/components/common-header/common-header';
 export default {
-	data() {
-		return {};
-	},
+	
 	components: {
 		commonHeader
 	},
-	mounted() {
-		// this.getInitData()
+	mixins: [share],
+	onLoad() {
+		this.otherPage();
 	},
-	methods: {
-		// async getInitData() {
-		// 	const res = await getNewUserInfo()
-		// 	console.log('获取到', res)
-		// }
-	}
+	
 };
 </script>
 

@@ -38,6 +38,7 @@
 </template>
 
 <script>
+	import share from '@/mixin/share.js'
 	// header
 	import commonHeader from "@/components/common-header/common-header";
     import {addAddress,editAddress} from "@/common/apis.js"
@@ -57,7 +58,9 @@
 		components:{
 			commonHeader
 		},
+		mixins: [share],
 		onLoad(option) {
+			this.otherPage();
             // 获取USERINFO_ID
             uni.getStorage({
                 key: 'USERINFO_ID',

@@ -37,6 +37,7 @@
 	import { KEY } from '@/common/commonConfig.js'
 	// 引入tabbar
 	import tabbar from "@/components/common-tabbar/common-tabbar";
+	import share from '@/mixin/share.js'
 	export default {
 		data() {
 			return {
@@ -57,9 +58,11 @@
 			commonHeader,
 			tabbar
 		},
+		mixins: [share],
 		onLoad(e) {
 			this.vendor = JSON.parse(e.vendor);		
 			this.getPoint()
+			this.otherPage();
 		},
 		methods: {
 			getPoint() {

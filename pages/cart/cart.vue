@@ -74,6 +74,7 @@
 	import tabbar from "@/components/common-tabbar/common-tabbar";
 	// 引入公用头部
 	import commonHeader from "@/components/common-header/common-header";
+	import share from '@/mixin/share.js'
 	import {
 		cartList, deletecarts, imgBaseUrl
 	} from "@/common/apis.js"
@@ -95,6 +96,10 @@
 		components: {
 			commonHeader,
 			tabbar
+		},
+		mixins: [share],
+		onLoad() {
+			this.otherPage();
 		},
 		mounted() {
 		

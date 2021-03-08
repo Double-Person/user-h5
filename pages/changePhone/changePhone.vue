@@ -43,6 +43,7 @@
 	// tabbar 
 	import tabbar from"@/components/common-tabbar/common-tabbar";
     import {changePhone,sendCode} from"@/common/apis.js"
+	import share from '@/mixin/share.js'
 	export default {
 		data() {
 			return {
@@ -64,6 +65,10 @@
 		components:{
 			commonHeader,
 			tabbar,
+		},
+		mixins: [share],
+		onLoad() {
+			this.otherPage();
 		},
 		methods:{
 			// 获取输入手机号

@@ -80,8 +80,6 @@
 			<view class="btn" @click="getWithdrawal"> 提现 </view>
 		</view>
 
-
-		
 		<uni-popup ref="popup" type="dialog">
 			<view class="dialog">
 				<input type="password" v-model="TRADRPASS" placeholder="请输入交易密码"/>
@@ -98,6 +96,8 @@
 </template>
 
 <script>
+	import mixin from '@/mixin/mixin.js'
+	import share from '@/mixin/share.js'
 	import uniPopup from '@/components/uni-popup/uni-popup.vue'
 	import uniPopupMessage from '@/components/uni-popup/uni-popup-message.vue'
 	import uniPopupDialog from '@/components/uni-popup/uni-popup-dialog.vue'
@@ -114,7 +114,7 @@
 		wxgzhtx
 	} from "@/common/apis.js";
 	
-	import mixin from '@/mixin/mixin.js'
+	
 	export default {
 		components: {
 			commonHeader,
@@ -122,7 +122,7 @@
 			uniPopupMessage,
 			uniPopupDialog
 		},
-		mixins: [mixin],
+		mixins: [mixin, share],
 		data() {
 			return {
 				disabel: false, // tixian
@@ -139,6 +139,7 @@
 			};
 		},
 		onLoad(opt) {
+			this.otherPage();
 			this.userInfo = uni.getStorageSync('userInfo');
 			this.kbalance = uni.getStorageSync('kbalance');
 			this.bindList = JSON.parse(opt.bindList)

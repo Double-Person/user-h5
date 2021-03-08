@@ -9,7 +9,7 @@
 
 				<text class="iconfont icon-xingxing" :class="xingHide?'xingHide':''"></text>
 				<text class="iconfont icon-lingdang-xianxing" @tap="goNews" :class="lingHide?'lingHide':''"></text>
-				<text class="iconfont icon-fenxiang" @tap="maskState=true" :class="fenxiangHide?'fenxiangHide':''"></text>
+				<!-- <text class="iconfont icon-fenxiang" @tap="maskState=true" :class="fenxiangHide?'fenxiangHide':''"></text> -->
 				<text class="iconfont icon-gengduo" :class="gengduoHide?'gengduoHide':''"></text>
 			</view>
 		</view>
@@ -57,10 +57,12 @@
 </template>
 
 <script>
-	import { SHARE_CONFIG } from '@/common/commonConfig.js'
+	import {
+		SHARE_CONFIG
+	} from '@/common/commonConfig.js'
 	import mixin from '@/mixin/mixin.js'
 	import share from '@/mixin/share.js'
-	share
+
 	export default {
 		props: {
 			headerTitl: {
@@ -98,16 +100,19 @@
 				maskState: false
 			}
 		},
+		onLoad(e) {
+			this.shareH5Mixin();
+		},
 		onShareAppMessage(res) {
 			console.log(res)
-		    if (res.from === 'button') {// 来自页面内分享按钮
-		      console.log(res.target)
-		    }
-		    return {
-		      title: '自定义分享标题',
-		      path: '/pages/index/index'
-		    }
-		  },
+			if (res.from === 'button') { // 来自页面内分享按钮
+				console.log(res.target)
+			}
+			return {
+				title: '自定义分享标题',
+				path: '/pages/index/index'
+			}
+		},
 		methods: {
 			//  提现记录
 			withdrawalRecord() {
@@ -130,14 +135,14 @@
 						url: "/pages/index/index"
 					})
 				}
-				
+
 				//  需要返回个人中心的  页面
 				if (backPersonalList.includes(pages.route)) {
 					uni.navigateTo({
 						url: "/pages/personal/personal"
 					})
 				}
-				
+
 				// 有可返回的页面则直接返回，uni.navigateBack默认返回失败之后会自动刷新页面 ，无法继续返回  
 				if (pages.length > 1) {
 					uni.navigateBack(1)
@@ -151,11 +156,11 @@
 					})
 				}
 				return;
-				
-				
+
+
 				// #endif
 				// 修复小程序app返回退出应用bug(无法返回重定向至首页)
-				
+
 				var pagelength = getCurrentPages();
 
 				var pageLast = pagelength[pagelength.length - 1];
@@ -184,7 +189,7 @@
 				} else {
 					uni.navigateBack(1)
 				}
-				
+
 			},
 			// 进入消息
 			goNews() {
@@ -192,11 +197,11 @@
 					url: "../../pages/news/news"
 				})
 			},
-		
-			
+
+
 			// 分享功能开始
 			share(index, event) {
-				this.shareH5(index)
+				this.shareH5Mixin(index)
 			}
 		},
 	}

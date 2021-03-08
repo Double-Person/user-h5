@@ -72,6 +72,7 @@
 </template>
 
 <script>
+	import share from '@/mixin/share.js'
 	// header
 	import commonHeader from "@/components/common-header/common-header";
 	// 引入tabbar
@@ -221,11 +222,15 @@
 			}
 
 		},
+		
+		mixins: [share],
+		
 		onLoad() {
 			uni.showLoading({
 				title: '加载中',
 				mask: true
 			})
+			this.otherPage();
 			uni.getStorage({
 				key: 'USERINFO_ID',
 				fail() {

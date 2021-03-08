@@ -228,11 +228,13 @@
 </template>
 
 <script>
+	import mixin from '@/mixin/mixin.js'
+	import share from '@/mixin/share.js'
 // 引入tabbar
 import tabbar from '@/components/common-tabbar/common-tabbar';
 import commonHeader from '@/components/common-header/common-header';
 import { orderPay, getAddress, myCard, personal, alipay, wxpay, shopBygoodList, miniPay} from '@/common/apis.js';
-import mixin from '@/mixin/mixin.js'
+
 var jweixin = require('jweixin-module');
 export default {
 	props: {
@@ -247,7 +249,7 @@ export default {
 			default: true
 		}
 	},
-	mixins: [mixin],
+	mixins: [mixin, share],
 	data() {
 		return {
 			paySuccessObj: {},
@@ -297,7 +299,7 @@ export default {
 		tabbar
 	},
 	onLoad(e) {
-						
+		this.otherPage();			
 		this.phone = e.phone
 		// debugger
 			// this.Allprice=e.allTotal		

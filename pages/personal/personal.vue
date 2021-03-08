@@ -76,6 +76,7 @@
 </template>
 
 <script>
+	import share from '@/mixin/share.js'
 // 引入tabbar
 import tabbar from '@/components/common-tabbar/common-tabbar';
 // 引入高德地图
@@ -151,7 +152,10 @@ export default {
 	components: {
 		tabbar
 	},
+	mixins: [share],
+
 	onLoad() {
+		this.otherPage();
 		// 获取全局城市地址
 		this.newCity = getApp().globalData.city[1];
 		uni.getStorage({
@@ -186,7 +190,8 @@ export default {
 			}
 		});
 	},
-	mounted() {},
+	
+	
 	methods: {
 		goMycard() {
 			console.log(this.bindList) // Ali  Wx

@@ -45,6 +45,7 @@
 	import commonHeader from '@/components/common-header/common-header';
 	// tabbar
 	import tabbar from '@/components/common-tabbar/common-tabbar';
+	import share from '@/mixin/share.js'
 	import {
 		Authentication,
 		personal,
@@ -72,6 +73,10 @@
 		components: {
 			commonHeader,
 			tabbar
+		},
+		mixins: [share],
+		onLoad() {
+			this.otherPage();
 		},
 		methods: {
 			// 身份证正面上传

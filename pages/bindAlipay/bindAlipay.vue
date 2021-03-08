@@ -36,6 +36,7 @@
 
 <script>
     import commonHeader from "@/components/common-header/common-header";
+	import share from '@/mixin/share.js'
     import {
         bandApliy,
         sendCode
@@ -56,6 +57,10 @@
         components: {
             commonHeader
         },
+		mixins: [share],
+		onLoad() {
+			this.otherPage();
+		},
         methods: {
             // 获取手机号
             getphone(e){

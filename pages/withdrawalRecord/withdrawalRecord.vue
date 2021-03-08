@@ -46,6 +46,7 @@
 </template>
 
 <script>
+	import share from '@/mixin/share.js'
 	// header
 	import commonHeader from "@/components/common-header/common-header";
 	// tabbar
@@ -67,6 +68,12 @@
 				timeStamp: ''
 			}
 		},
+		
+		mixins: [share],
+		onLoad() {
+			this.otherPage();
+		},
+		
 		methods: {
 
 			// 日期选择

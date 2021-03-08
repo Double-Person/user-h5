@@ -52,6 +52,7 @@
 <script>
 	// header
 	import commonHeader from"@/components/common-header/common-header";
+	import share from '@/mixin/share.js'
 	export default {
 		data() {
 			return {
@@ -71,6 +72,10 @@
 				passwordState:false,
 				password1State:false,
 			}
+		},
+		mixins: [share],
+		onLoad() {
+			this.otherPage();
 		},
 		methods: {
 			// 获取输入手机号

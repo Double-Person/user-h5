@@ -28,6 +28,7 @@
 	// 引入tabbar
 	import tabbar from"@/components/common-tabbar/common-tabbar";
     import {level} from"@/common/apis.js"
+	import share from '@/mixin/share.js'
 	export default {
 		data() {
 			return {
@@ -48,7 +49,9 @@
 			commonHeader,
 			tabbar
 		},
+		mixins: [share],
         mounted() {
+			this.otherPage();
 			const USERINFO_ID = uni.getStorageSync('USERINFO_ID')
 			level({ USERINFO_ID }).then(res => {
 				this.gradeList = res.returnMsg.list

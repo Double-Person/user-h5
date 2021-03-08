@@ -229,6 +229,7 @@
 </template>
 
 <script>
+	import share from '@/mixin/share.js'
 	import commonHeader from "@/components/common-header/common-header";
 	import tabbar from "@/components/common-tabbar/common-tabbar";
 
@@ -259,6 +260,10 @@
 		components: {
 			commonHeader,
 			tabbar
+		},
+		mixins: [share],
+		onLoad() {
+			this.otherPage();
 		},
 		mounted() {
 			this.getOrderList(1)
