@@ -49,10 +49,10 @@ const share = {
 					jweixin.checkJsApi({
 						jsApiList: ['updateAppMessageShareData', 'updateTimelineShareData', 'onMenuShareAppMessage'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
 						success: function(res) {
-							console.log('检查api成功', res)
+							// console.log('检查api成功', res)
 						},
 						fail: function(err) {
-							console.log('api失败', err)
+							// console.log('api失败', err)
 						}
 					});
 					let shartData = {
@@ -75,7 +75,7 @@ const share = {
 						  link: encode, 
 						  imgUrl: imageUrl,
 						  success: function (res) {
-							  console.log('分享成功', res)
+							  // console.log('分享成功', res)
 						  },
 						  
 						})

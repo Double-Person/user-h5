@@ -23,7 +23,6 @@
 		<!-- 广告 @click="goPreferencesPage" -->
 		<view class="index-poster">
 			<specialBanner :banner-list="bannerList" :swiper-config="swiperConfig"></specialBanner>
-			<!-- <image src="../../static/images/banner.png" mode=""></image> -->
 		</view>
 		<!-- 分类 -->
 		<view class="index-item">
@@ -78,10 +77,8 @@
 	</view>
 </template>
 
-<!-- <script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.6&amp;key=2df5711d4e2fd9ecd1622b5a53fc6b1d"></script> -->
-<!-- <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=DD279b2a90afdf0ae7a3796787a0742e"></script> -->
+
 <script>
-	// banner
 	// 318dfe4e09e51453d11d2c31cde26534
 	import specialBanner from '@/components/specialBanner.vue'
 	//引入tabbar
@@ -158,12 +155,6 @@
 			// window.location.href = 'https://yflh.hkzhtech.com/qflhadmin/#/pages/index/index'
 			await this.showLoad();
 			
-			// #ifdef APP-PLUS
-			// plus 获取经纬度
-			await this.getLocations()
-			// #endif
-			// this.getPoint()
-			
 			// #ifdef H5
 			await this.loactionH5()
 			// #endif
@@ -178,30 +169,7 @@
 		methods: {
 			// 扫描二维码
 			scanCode() {
-				// 允许从相机和相册扫码
-				// #ifdef APP-PLUS
-				uni.scanCode({
-					scanType: ['qrCode'],
-					success: ({ result }) => {
-						let { shopId, money } = JSON.parse(result);
-						getShopPay({ SHOP_ID: shopId, money }).then(res => {
-								if (res.returnMsg.status != '00') {
-								return uni.showToast({
-									title: '条码错误!',
-									icon: 'none',
-									duration: 2000,
-									mask: true
-								});
-							}
-							uni.navigateTo({
-								// url: '../scanPay/scanPay?shopName=' + res.returnMsg.shop.SHOP_NAME + '&shopId=' + shopId+ '&money=' + money
-								url: `../scanPay/scanPay?shopName=${res.returnMsg.shop.SHOP_NAME}&shopId=${shopId}&money=${money}`
-							});
-							// plus.runtime.openURL('https://uniapp.dcloud.io/api/system/barcode');
-						});
-					},
-				});
-				// #endif
+				
 				// #ifdef H5
 				autograph({"url": location.href.split('#')[0]}).then(res=>{
 					// 引入微信JS-SDK
@@ -288,70 +256,7 @@
 			hideLoad() {
 				uni.hideLoading()
 			},
-			getLocations() {
-				let that = this;
-				uni.getLocation({
-					type: 'wgs84',
-					geocode: true, //设置该参数为true可直接获取经纬度及城市信息
-					success: async (res) => {
-						this.longitude = res.longitude
-						this.latitude = res.latitude
-						var points = new plus.maps.Point(res.longitude, res.latitude);
-				
-						plus.maps.Map.reverseGeocode(
-							points, {},
-							function(event) {
-								var address = event.address; // 转换后的地理位置
-								var point = event.coord; // 转换后的坐标信息
-								var coordType = event.coordType; // 转换后的坐标系类型
-								var reg = /.+?(省|市|自治区|自治州|县|区)/g;
-								let addressList = address.match(reg).toString().split(",");
-								uni.setStorageSync('addressList', addressList)
-								// addressList[0] +
-								this.newCity = addressList[1] + addressList[2]
-							},
-							function(e) {}
-						);
-				
-				
-				
-						await uni.setStorageSync('locationPoint', JSON.stringify(res));
-						await this.conversionPoint(res)
-						// 位置转换
-						await uni.request({
-							url: "https://restapi.amap.com/v3/geocode/regeo?parameters",
-							method: 'GET',
-							data: {
-								key: that.key,
-								location: `${res.longitude}, ${res.latitude}`
-							},
-							success: (data) => {
-								getApp().globalData.city = [];
-								let {
-									city,
-									district
-								} = data.data.regeocode.addressComponent;
-								this.newCity = city + district;
-								this.cityShow = district;
-								this.passCity = city;
-								getApp().globalData.city.push(city, district);
-							},
-							fail(err) {
-								uni.showToast({ title: "定位失败！手动选择", icon: 'none' })
-							}
-						})
-				
-					},
-					fail() {
-						uni.showModal({
-							title: '提示',
-							content: '请打开手机定位权限',
-							showCancel: false,
-				
-						});
-					}
-				});
-			},
+		
 			// 獲取分類
 			_homePage() {
 				homePage().then(res => {
@@ -416,11 +321,7 @@
 			// 前往本地优惠
 			goLocalPre() {
 				let citys = '';
-				// if(this.passCity2Loca == '') {
-				// 	citys = this.passCity;
-				// }else {
-				// 	citys = this.passCity2Loca;
-				// }
+			
 				uni.navigateTo({ // passCity2Loca   passCity
 				
 					url: '../localPreferences/localPreferences?longitude=' + this.longitude + '&latitude=' + this.latitude +

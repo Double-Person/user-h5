@@ -447,14 +447,18 @@
 			getPoint() {
 				uni.getLocation({
 					type: 'gcj02',
-					geocode: true, //设置该参数为true可直接获取经纬度及城市信息
 					success: (res) => {
 						this.conversionPoint(res)
 					},
 					fail(err) {
-						uni.showToast({ title: '定位失败', icon: 'none' })
-					}
+						uni.showToast({
+							title: '定位失败',
+							icon: 'none'
+						})
+					},
+					
 				});
+			
 			},
 			//   金纬度转位置
 			conversionPoint(res) {
