@@ -194,16 +194,17 @@
 				if (this.money < 1) {
 					return uni.showToast({ title: '提现金额必须大于1元', icon: 'none' })
 				}
+				if(this.money !== parseInt(this.money)) {
+					// this.money = parseInt(this.money)
+					return uni.showToast({ title: '请输入整数', icon: 'none' })
+				}
 			
 				if (!this.cardNum) {
 					return uni.showToast({ title: '请选择提现位置', icon: 'none' })
 				}
 				if(!this.openid) {
 					if(this.type == 'wechat') {
-						uni.showToast({
-							title: '请微信授权登录',
-							icon: 'none'
-						})
+						uni.showToast({ title: '请微信授权登录', icon: 'none' })
 						this.getOpenIdByWchat()
 						return false
 					}
@@ -219,14 +220,10 @@
 					return false;
 				}
 				// PASSWORD
-				console.log(this.userInfo)
 				let { TRADRPASS } = this.userInfo;
 				if(TRADRPASS != this.TRADRPASS) {
 					this.TRADRPASS = '';
-					return uni.showToast({
-						title:"密码错误",
-						icon: 'none'
-					})
+					return uni.showToast({ title:"密码错误", icon: 'none' })
 				}
 				if(this.disabel) {
 					return false;
@@ -241,6 +238,7 @@
 					money: Number(this.money), // amount  金额  
 					openid: this.openid
 				}
+				
 				// 微信提现
 				if(this.type == 'wechat') {
 					this.weChatWithdrawal(obj)
@@ -249,29 +247,18 @@
 				}
 			},
 			
+			
 			// 微信提现
 			weChatWithdrawal(obj) {
 				wxgzhtx(obj).then(res => {
-					if (res.msgType == 0) {
-						uni.showToast({
-							title: '提现成功',
-							icon: 'none'
-						})
-					} else {
-						uni.showToast({
-							title: res.returnMsg || '提现失败' ,
-							icon: 'none'
-						})
-					}
-				
-					setTimeout(() => {
-						uni.navigateTo({
-							url: '/pages/personal/personal'
-						})
-					}, 1000)
+					this.successCb(res)
 				}).finally(() => {
-					this.disabel = false;
 					this.$refs.popup.close();
+					setTimeout(() => {
+						this.disabel = false;
+					}, 1000)
+					
+					
 				})
 			},
 			// 支付宝提现
@@ -279,28 +266,23 @@
 				obj.openid = '';
 				obj.zfb = this.cardNum;
 				alitx(obj).then(res => {
-					console.log(res)
-					if (res.msgType == 0) {
-						uni.showToast({
-							title: '提现成功',
-							icon: 'none'
-						})
-					} else {
-						uni.showToast({
-							title: res.returnMsg || '提现失败' ,
-							icon: 'none'
-						})
-					}
-				
-					setTimeout(() => {
-						uni.navigateTo({
-							url: '/pages/personal/personal'
-						})
-					}, 1000)
+					this.successCb(res)
 				}).finally(() => {
-					this.disabel = false;
 					this.$refs.popup.close();
+					setTimeout(() => {
+						this.disabel = false;
+					}, 1000)
 				})
+			},
+			successCb(res) {
+				if (res.msgType == 0) {
+					uni.showToast({ title: '提现成功', icon: 'none' })
+				} else {
+					uni.showToast({ title: res.returnMsg || '提现失败', icon: 'none' })
+				}
+				setTimeout(() => {
+					uni.navigateTo({ url: '/pages/personal/personal' })
+				}, 1000)
 			},
 			
 			// 获取微信openId

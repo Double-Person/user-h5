@@ -20,7 +20,7 @@ export const INDEX_KEY = '1fd0191b0e9bd8c444dba98677e737ef';
 let urls = 'https://qfl.qfl168.cn/qflhadmin/#';
 
 export const COMMON_URL = 'https://qfl.qfl168.cn/qufl';
-// export const COMMON_URL = 'http://192.168.0.110:8081';
+// export const COMMON_URL = 'http://192.168.0.102:8081';
 
 // 微信公众号appid
 export const APPID = 'wxcd3e4c058be3dd03';

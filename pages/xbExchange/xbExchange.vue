@@ -30,7 +30,7 @@
 			<!-- 兑换 -->
 			<view class="xbExchange-content-input item">
 				<view class="num">
-					<input @input="changeNum" placeholder-style="fontSize:28rpx;color:#999;" type="text" :value="value" placeholder="请输入要兑换的数量" />
+					<input placeholder-style="fontSize:28rpx;color:#999;" type="number" v-model="value" placeholder="请输入要兑换的整数数量" />
 					<text @tap="allduixian">全部兑换</text>
 				</view>
 
@@ -148,21 +148,17 @@
 					url: '../myPentacle/myPentacle'
 				})
 			},
-			// 兑换数量
-			changeNum(e) {
-				this.value = e.detail.value;
-			},
+		
 			// 全部兑换
 			allduixian() {
 				this.value = this.newNum;
 			},
 			xbExchange() {
 				if (this.value === '') {
-					return uni.showToast({
-						title: '请输入兑换数量!',
-						icon: 'none'
-					})
-
+					return uni.showToast({ title: '请输入兑换数量!', icon: 'none' })
+				}
+				if(this.value *1 != parseInt(this.value)) {
+					return uni.showToast({ title: '星币只能兑换整数!', icon: 'none' })
 				}
 				uni.showLoading({
 					title: '兑换中...',

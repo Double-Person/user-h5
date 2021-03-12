@@ -517,7 +517,9 @@ export default {
 			// if(this.tradePass == '') {
 			// 	return uni.showToast({ title: '请输入交易密码', icon: 'none' })
 			// }
-			if(this.BALANCE == '0.00') {
+			// submitTotal && (submitTotal*1).toFixed(2) || 0
+			// if(this.BALANCE == '0.00') {
+			if(this.BALANCE *1 < this.submitTotal*1) {
 				return uni.showToast({ title: '余额不足', icon: 'none' })
 			}
 			if(this.tradePass == '') {

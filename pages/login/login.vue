@@ -310,6 +310,9 @@
 					data: JSON.stringify(this.saveObj),
 					success() {
 						window.location.href = 'https://qfl.qfl168.cn/qflhadmin/#/pages/index/index'
+						// uni.navigateTo({
+						// 	url: '../index/index'
+						// })
 					},
 					fail() {
 						uni.showToast({ title: '保存失败', icon: 'none' })

@@ -462,6 +462,7 @@
 							setTimeout(() => {
 								try{
 									let parmas = {
+										total: _self.copeWith,
 										SHOP_NAME: _self.shopName,
 										NUMBER: _self.NUMBER,
 										TIME: _self.TIME,
@@ -470,7 +471,7 @@
 									_self.paySuccess(parmas)
 								}catch(e){
 									let order = {
-										total: _self.ActualPayment,
+										total: _self.copeWith,
 										SHOP_NAME: _self.shopName,
 										NUMBER: _self.NUMBER,
 										TIME: _self.TIME,
@@ -498,7 +499,7 @@
 			// 支付成功
 			paySuccess(order) {
 				// order.total = this.ActualPayment; // money
-				order.total = this.ActualPayment; // money
+				order.total = this.copeWith; // money
 				setTimeout(() => {
 					uni.redirectTo({
 						url: '../payComplete/payComplete?orderInfo=' + JSON.stringify(order)
@@ -521,6 +522,7 @@
 
 			// 余额支付
 			balancePay(tradePass) {
+				const _self = this;
 				shopBygoodList({
 					orderSummaryId: this.orderID,
 					tradePass
@@ -548,9 +550,17 @@
 									title: '支付成功',
 									icon: 'none'
 								})
-								uni.navigateTo({
-									url: '../payComplete/payComplete'
-								});
+								
+								let order = {
+									total: _self.copeWith,
+									SHOP_NAME: _self.shopName,
+									NUMBER: _self.NUMBER,
+									TIME: _self.TIME,
+								}
+								_self.paySuccess(order)
+								// uni.navigateTo({
+								// 	url: '../payComplete/payComplete'
+								// });
 							}, 2000);
 						}
 					} else {
